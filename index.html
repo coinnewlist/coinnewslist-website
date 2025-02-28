@@ -1,186 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cryptocurrency Live Price</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 20px;
-        }
-        nav {
-            margin-bottom: 20px;
-        }
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-        }
-        .container {
-            max-width: 100%;
-            padding: 10px;
-        }
-        .trending {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .trending-item {
-            background: white;
-            padding: 8px 12px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .trending-item img {
-            width: 16px;
-            margin-right: 5px;
-        }
-        .green { color: green; }
-        .red { color: red; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            background: white;
-            overflow-x: auto;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f8f9fa;
-            font-size: 16px;
-        }
-        td {
-            font-size: 15px;
-        }
-        .crypto-logo {
-            width: 20px;
-            vertical-align: middle;
-            margin-right: 5px;
-        }
-        @media (max-width: 768px) {
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-            .trending {
-                flex-direction: column;
-                align-items: center;
-            }
-            .trending-item {
-                width: 90%;
-                text-align: center;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CoinNewList</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 20px;
+    }
+    nav {
+      margin-bottom: 20px;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 100%;
+      padding: 10px;
+    }
+    .trending {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .trending-item {
+      background: white;
+      padding: 8px 12px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+    .trending-item img {
+      width: 16px;
+      margin-right: 5px;
+    }
+    .green { color: green; }
+    .red { color: red; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      overflow-x: auto;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-size: 16px;
+    }
+    td {
+      font-size: 15px;
+    }
+    .crypto-logo {
+      width: 20px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .trending {
+        flex-direction: column;
+        align-items: center;
+      }
+      .trending-item {
+        width: 90%;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h2><img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" class="crypto-logo"> CoinNewList</h2>
+  <h2>CoinNewList</h2>
+
+  <nav>
+    <a href="#">All Crypto</a>
+    <a href="#">NewList</a>
+    <a href="#">Trending</a>
     
-    <nav>
-        <a href="#">All Crypto</a>
-        <a href="#">NewList</a>
-        <a href="#">Trending</a>
-        <a href="#">News</a>
-        <a href="#">CoinNewList</a>
-    </nav>
-    
-    <div class="container">
-        <h3>Most Visited Cryptocurrencies</h3>
-        <div class="trending">
-            <p>Loading trending cryptocurrencies...</p>
-        </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Market Cap</th>
-                    <th>Price</th>
-                    <th>24h % Change</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="5">Loading data...</td></tr>
-            </tbody>
-        </table>
+    <a href="#">News</a>
+  </nav>
+
+  <div class="container">
+    <h3>Most Visited Cryptocurrencies</h3>
+    <div class="trending">
+      <p>Loading trending cryptocurrencies...</p>
     </div>
-    
-    <script>
-        async function fetchTrendingCrypto() {
-            try {
-                let response = await fetch('https://api.coingecko.com/api/v3/search/trending');
-                let data = await response.json();
-                updateTrendingUI(data);
-            } catch (error) {
-                console.error("Error fetching trending coins:", error);
-            }
-        }
 
-        function updateTrendingUI(data) {
-            let trendingContainer = document.querySelector(".trending");
-            trendingContainer.innerHTML = "";
-            data.coins.forEach(coin => {
-                let item = document.createElement("div");
-                let priceChange = coin.item.data.price_change_percentage_24h?.usd || 0;
-                item.className = "trending-item";
-                item.innerHTML = `
-                    <img src="${coin.item.thumb}" alt="${coin.item.name}">
-                    ${coin.item.name} (${coin.item.symbol.toUpperCase()}) - $${coin.item.data.price || "?"} /
-                    <span class="${priceChange >= 0 ? 'green' : 'red'}">${priceChange.toFixed(2)}%</span>
-                `;
-                trendingContainer.appendChild(item);
-            });
-        }
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Market Cap</th>
+          <th>Price</th>
+          <th>24h % Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="5">Loading data...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-        async function fetchCryptoData() {
-            try {
-                let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
-                let data = await response.json();
-                updateCryptoUI(data);
-            } catch (error) {
-                console.error("Error fetching crypto data:", error);
-            }
-        }
+  <script>
+    // Function to open the official website for a coin.
+    function openOfficialWebsite(coinId) {
+      fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
+        .then(response => response.json())
+        .then(data => {
+          // The homepage property is an array; we select the first non-empty URL.
+          let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
+          if (officialWebsite) {
+            window.open(officialWebsite, '_blank');
+          } else {
+            // Fallback to the CoinGecko coin page if no official website is available.
+            window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching coin details:", error);
+          // Fallback to the CoinGecko coin page in case of error.
+          window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
+        });
+    }
 
-        function updateCryptoUI(data) {
-            let tableBody = document.querySelector("tbody");
-            tableBody.innerHTML = "";
-            data.forEach((crypto, index) => {
-                let row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><img src="${crypto.image}" class="crypto-logo"> ${crypto.name} (${crypto.symbol.toUpperCase()})</td>
-                    <td>$${crypto.market_cap.toLocaleString()}</td>
-                    <td class="price">$${crypto.current_price.toFixed(2)}</td>
-                    <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'green' : 'red'}">
-                        ${crypto.price_change_percentage_24h.toFixed(2)}%
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
+    async function fetchTrendingCrypto() {
+      try {
+        let response = await fetch('https://api.coingecko.com/api/v3/search/trending');
+        let data = await response.json();
+        updateTrendingUI(data);
+      } catch (error) {
+        console.error("Error fetching trending coins:", error);
+      }
+    }
 
-        window.onload = () => {
-            fetchTrendingCrypto();
-            fetchCryptoData();
-            setInterval(fetchCryptoData, 1000);
-            setInterval(fetchTrendingCrypto, 1000);
-        };
-    </script>
+    function updateTrendingUI(data) {
+      let trendingContainer = document.querySelector(".trending");
+      trendingContainer.innerHTML = "";
+      data.coins.forEach(coin => {
+        let item = document.createElement("div");
+        let priceChange = coin.item.data.price_change_percentage_24h?.usd || 0;
+        item.className = "trending-item";
+        // Clicking will now open the coin's official website.
+        item.onclick = () => openOfficialWebsite(coin.item.id);
+        item.innerHTML = `
+          <img src="${coin.item.thumb}" alt="${coin.item.name}" />
+          ${coin.item.name} (${coin.item.symbol.toUpperCase()}) - $${coin.item.data.price || "?"} /
+          <span class="${priceChange >= 0 ? 'green' : 'red'}">${priceChange.toFixed(2)}%</span>
+        `;
+        trendingContainer.appendChild(item);
+      });
+    }
+
+    async function fetchCryptoData() {
+      try {
+        let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
+        let data = await response.json();
+        updateCryptoUI(data);
+      } catch (error) {
+        console.error("Error fetching crypto data:", error);
+      }
+    }
+
+    function updateCryptoUI(data) {
+      let tableBody = document.querySelector("tbody");
+      tableBody.innerHTML = "";
+      data.forEach((crypto, index) => {
+        let row = document.createElement("tr");
+        row.style.cursor = "pointer";
+        // Clicking a row now opens the coin's official website.
+        row.onclick = () => openOfficialWebsite(crypto.id);
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>
+            <img src="${crypto.image}" class="crypto-logo" alt="${crypto.name}" /> 
+            ${crypto.name} (${crypto.symbol.toUpperCase()})
+          </td>
+          <td>$${crypto.market_cap.toLocaleString()}</td>
+          <td class="price">$${crypto.current_price.toFixed(2)}</td>
+          <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'green' : 'red'}">
+            ${crypto.price_change_percentage_24h.toFixed(2)}%
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    window.onload = () => {
+      fetchTrendingCrypto();
+      fetchCryptoData();
+      // Adjusted intervals to 5000ms to be mindful of API rate limits.
+      setInterval(fetchCryptoData, 5000);
+      setInterval(fetchTrendingCrypto, 5000);
+    };
+  </script>
 </body>
 </html>
+
