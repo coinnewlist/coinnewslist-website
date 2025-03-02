@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CoinNewList</title>
+  <title>Cryptocurrency Live Price</title>
   <style>
-    body {
+    /* Ensure the page uses the full viewport */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       text-align: center;
-      margin: 20px;
     }
     nav {
       margin-bottom: 20px;
@@ -23,6 +27,9 @@
     .container {
       max-width: 100%;
       padding: 10px;
+      box-sizing: border-box;
+      /* Leave room for header and nav */
+      min-height: calc(100% - 80px);
     }
     .trending {
       display: flex;
@@ -89,16 +96,20 @@
   </style>
 </head>
 <body>
-  <h2>CoinNewList</h2>
+  <!-- Header with the custom logo -->
+  <h2>
+    <img src="file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png" class="crypto-logo" alt="Custom Logo" />
+    CoinNewList
+  </h2>
 
   <nav>
     <a href="#">All Crypto</a>
     <a href="#">NewList</a>
     <a href="#">Trending</a>
-    
     <a href="#">News</a>
+    <a href="#">CoinNewList</a>
   </nav>
-
+  
   <div class="container">
     <h3>Most Visited Cryptocurrencies</h3>
     <div class="trending">
@@ -124,23 +135,26 @@
   </div>
 
   <script>
-    // Function to open the official website for a coin.
-    function openOfficialWebsite(coinId) {
+    // Open the official website for a coin (fallbacks to its CoinGecko page if unavailable).
+    function openOfficialWebsite(coinId, coinSymbol) {
+      // Check if the coin is ADA (coinnewlist), then redirect to the specified link.
+      if (coinSymbol.toUpperCase() === "ADA") {
+        window.open("https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D", '_blank');
+        return;
+      }
+      // Otherwise, fetch coin details from CoinGecko.
       fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
         .then(response => response.json())
         .then(data => {
-          // The homepage property is an array; we select the first non-empty URL.
           let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
           if (officialWebsite) {
             window.open(officialWebsite, '_blank');
           } else {
-            // Fallback to the CoinGecko coin page if no official website is available.
             window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
           }
         })
         .catch(error => {
           console.error("Error fetching coin details:", error);
-          // Fallback to the CoinGecko coin page in case of error.
           window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
         });
     }
@@ -159,15 +173,28 @@
       let trendingContainer = document.querySelector(".trending");
       trendingContainer.innerHTML = "";
       data.coins.forEach(coin => {
-        let item = document.createElement("div");
         let priceChange = coin.item.data.price_change_percentage_24h?.usd || 0;
+        // Use custom logo for ADA
+        const logoSrc = coin.item.symbol.toUpperCase() === "ADA"
+          ? "file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png"
+          : coin.item.thumb;
+        let displayName, displayPrice, displayChange;
+        if (coin.item.symbol.toUpperCase() === "ADA") {
+          displayName = "Coinnewlist (CoinNewList)";
+          displayPrice = "0.0000000554574413";
+          displayChange = "500.00%";
+        } else {
+          displayName = `${coin.item.name} (${coin.item.symbol.toUpperCase()})`;
+          displayPrice = coin.item.data.price || "?";
+          displayChange = `${priceChange.toFixed(2)}%`;
+        }
+        let item = document.createElement("div");
         item.className = "trending-item";
-        // Clicking will now open the coin's official website.
-        item.onclick = () => openOfficialWebsite(coin.item.id);
+        item.onclick = () => openOfficialWebsite(coin.item.id, coin.item.symbol);
         item.innerHTML = `
-          <img src="${coin.item.thumb}" alt="${coin.item.name}" />
-          ${coin.item.name} (${coin.item.symbol.toUpperCase()}) - $${coin.item.data.price || "?"} /
-          <span class="${priceChange >= 0 ? 'green' : 'red'}">${priceChange.toFixed(2)}%</span>
+          <img src="${logoSrc}" alt="${coin.item.name}" />
+          ${displayName} - $${displayPrice} /
+          <span class="${priceChange >= 0 ? 'green' : 'red'}">${displayChange}</span>
         `;
         trendingContainer.appendChild(item);
       });
@@ -187,20 +214,32 @@
       let tableBody = document.querySelector("tbody");
       tableBody.innerHTML = "";
       data.forEach((crypto, index) => {
+        const logoSrc = crypto.symbol.toUpperCase() === "ADA"
+          ? "file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png"
+          : crypto.image;
+        let displayName, displayPrice, displayChange;
+        if (crypto.symbol.toUpperCase() === "ADA") {
+          displayName = "Coinnewlist (CoinNewList)";
+          displayPrice = "0.0000000554574413";
+          displayChange = "500.00%";
+        } else {
+          displayName = `${crypto.name} (${crypto.symbol.toUpperCase()})`;
+          displayPrice = crypto.current_price.toFixed(2);
+          displayChange = `${crypto.price_change_percentage_24h.toFixed(2)}%`;
+        }
         let row = document.createElement("tr");
         row.style.cursor = "pointer";
-        // Clicking a row now opens the coin's official website.
-        row.onclick = () => openOfficialWebsite(crypto.id);
+        row.onclick = () => openOfficialWebsite(crypto.id, crypto.symbol);
         row.innerHTML = `
           <td>${index + 1}</td>
           <td>
-            <img src="${crypto.image}" class="crypto-logo" alt="${crypto.name}" /> 
-            ${crypto.name} (${crypto.symbol.toUpperCase()})
+            <img src="${logoSrc}" class="crypto-logo" alt="${crypto.name}" /> 
+            ${displayName}
           </td>
           <td>$${crypto.market_cap.toLocaleString()}</td>
-          <td class="price">$${crypto.current_price.toFixed(2)}</td>
+          <td class="price">$${displayPrice}</td>
           <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'green' : 'red'}">
-            ${crypto.price_change_percentage_24h.toFixed(2)}%
+            ${displayChange}
           </td>
         `;
         tableBody.appendChild(row);
@@ -210,11 +249,10 @@
     window.onload = () => {
       fetchTrendingCrypto();
       fetchCryptoData();
-      // Adjusted intervals to 5000ms to be mindful of API rate limits.
+      // Update intervals set to 5000ms to help manage API rate limits.
       setInterval(fetchCryptoData, 5000);
       setInterval(fetchTrendingCrypto, 5000);
     };
   </script>
 </body>
 </html>
-
