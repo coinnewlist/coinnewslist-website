@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cryptocurrency Live Price</title>
   <style>
-    /* Ensure the page uses the full viewport */
     html, body {
       margin: 0;
       padding: 0;
@@ -28,7 +27,6 @@
       max-width: 100%;
       padding: 10px;
       box-sizing: border-box;
-      /* Leave room for header and nav */
       min-height: calc(100% - 80px);
     }
     .trending {
@@ -93,10 +91,46 @@
         text-align: center;
       }
     }
+    /* Simple loading indicator style */
+    .loading {
+      font-style: italic;
+      color: #888;
+    }
+    /* Modal styles */
+    .modal {
+      display: none; 
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      text-align: left;
+      position: relative;
+    }
+    .close-modal {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      right: 10px;
+      top: 5px;
+    }
   </style>
 </head>
 <body>
-  <!-- Header with the custom logo -->
   <h2>
     <img src="file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png" class="crypto-logo" alt="Custom Logo" />
     CoinNewList
@@ -107,13 +141,12 @@
     <a href="#">NewList</a>
     <a href="#">Trending</a>
     <a href="#">News</a>
-    <a href="#">CoinNewList</a>
   </nav>
   
   <div class="container">
     <h3>Most Visited Cryptocurrencies</h3>
     <div class="trending">
-      <p>Loading trending cryptocurrencies...</p>
+      <p class="loading">Loading trending cryptocurrencies...</p>
     </div>
 
     <table>
@@ -128,35 +161,83 @@
       </thead>
       <tbody>
         <tr>
-          <td colspan="5">Loading data...</td>
+          <td colspan="5" class="loading">Loading data...</td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <!-- Modal to display coin details -->
+  <div id="coinModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div id="modalBody">
+        <p>Loading coin details...</p>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Open the official website for a coin (fallbacks to its CoinGecko page if unavailable).
+    // Global cache for coin details
+    const coinCache = {};
+
+    // Modal functions
+    function showModal(content) {
+      const modal = document.getElementById("coinModal");
+      const modalBody = document.getElementById("modalBody");
+      modalBody.innerHTML = content;
+      modal.style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById("coinModal").style.display = "none";
+    }
+    document.querySelector(".close-modal").onclick = closeModal;
+    window.onclick = function(event) {
+      if (event.target == document.getElementById("coinModal")) {
+        closeModal();
+      }
+    }
+
+    // Open the official website for a coin (or show details in a modal)
     function openOfficialWebsite(coinId, coinSymbol) {
-      // Check if the coin is ADA (coinnewlist), then redirect to the specified link.
+      // If ADA, use custom link immediately
       if (coinSymbol.toUpperCase() === "ADA") {
-        window.open("https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D", '_blank');
+        showModal(`<p><strong>Coinnewlist (CoinNewList)</strong></p>
+                   <p><a href="https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D" target="_blank">Visit Official Website</a></p>`);
         return;
       }
-      // Otherwise, fetch coin details from CoinGecko.
-      fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
-        .then(response => response.json())
-        .then(data => {
-          let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
-          if (officialWebsite) {
-            window.open(officialWebsite, '_blank');
-          } else {
-            window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching coin details:", error);
-          window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
-        });
+      
+      // Check if coin details are cached
+      if (coinCache[coinId]) {
+        let officialWebsite = coinCache[coinId].links.homepage.find(url => url && url.trim() !== "");
+        let content = `<p><strong>${coinCache[coinId].name}</strong></p>`;
+        if (officialWebsite) {
+          content += `<p><a href="${officialWebsite}" target="_blank">Visit Official Website</a></p>`;
+        } else {
+          content += `<p><a href="https://www.coingecko.com/en/coins/${coinId}" target="_blank">View on CoinGecko</a></p>`;
+        }
+        showModal(content);
+      } else {
+        // Show modal immediately while fetching details
+        showModal("<p>Loading coin details...</p>");
+        fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
+          .then(response => response.json())
+          .then(data => {
+            coinCache[coinId] = data; // Cache the data
+            let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
+            let content = `<p><strong>${data.name}</strong></p>`;
+            if (officialWebsite) {
+              content += `<p><a href="${officialWebsite}" target="_blank">Visit Official Website</a></p>`;
+            } else {
+              content += `<p><a href="https://www.coingecko.com/en/coins/${coinId}" target="_blank">View on CoinGecko</a></p>`;
+            }
+            showModal(content);
+          })
+          .catch(error => {
+            console.error("Error fetching coin details:", error);
+            showModal(`<p>Error loading details. <a href="https://www.coingecko.com/en/coins/${coinId}" target="_blank">View on CoinGecko</a></p>`);
+          });
+      }
     }
 
     async function fetchTrendingCrypto() {
@@ -174,9 +255,8 @@
       trendingContainer.innerHTML = "";
       data.coins.forEach(coin => {
         let priceChange = coin.item.data.price_change_percentage_24h?.usd || 0;
-        // Use custom logo for ADA
         const logoSrc = coin.item.symbol.toUpperCase() === "ADA"
-          ? "file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png"
+          ? "https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png"
           : coin.item.thumb;
         let displayName, displayPrice, displayChange;
         if (coin.item.symbol.toUpperCase() === "ADA") {
@@ -204,6 +284,15 @@
       try {
         let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
         let data = await response.json();
+        // Pre-cache coin details (except ADA)
+        data.forEach(crypto => {
+          if (crypto.symbol.toUpperCase() !== "ADA") {
+            fetch(`https://api.coingecko.com/api/v3/coins/${crypto.id}`)
+              .then(response => response.json())
+              .then(details => { coinCache[crypto.id] = details; })
+              .catch(err => console.error("Error prefetching details:", err));
+          }
+        });
         updateCryptoUI(data);
       } catch (error) {
         console.error("Error fetching crypto data:", error);
@@ -215,7 +304,7 @@
       tableBody.innerHTML = "";
       data.forEach((crypto, index) => {
         const logoSrc = crypto.symbol.toUpperCase() === "ADA"
-          ? "file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png"
+          ? "https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png"
           : crypto.image;
         let displayName, displayPrice, displayChange;
         if (crypto.symbol.toUpperCase() === "ADA") {
@@ -249,10 +338,11 @@
     window.onload = () => {
       fetchTrendingCrypto();
       fetchCryptoData();
-      // Update intervals set to 5000ms to help manage API rate limits.
+      // Update intervals set to 5000ms
       setInterval(fetchCryptoData, 5000);
       setInterval(fetchTrendingCrypto, 5000);
     };
   </script>
 </body>
 </html>
+
