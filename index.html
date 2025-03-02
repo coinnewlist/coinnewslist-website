@@ -45,6 +45,10 @@
       font-size: 14px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .trending-item:hover {
+      transform: scale(1.02);
     }
     .trending-item img {
       width: 16px;
@@ -96,17 +100,22 @@
       font-style: italic;
       color: #888;
     }
-    /* Modal styles */
+    /* Modal styles with smooth fade in/out */
     .modal {
-      display: none; 
+      display: none;
       position: fixed;
       z-index: 1000;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      overflow: auto;
       background-color: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal.show {
+      display: block;
+      opacity: 1;
     }
     .modal-content {
       background-color: #fefefe;
@@ -115,24 +124,24 @@
       border: 1px solid #888;
       width: 80%;
       max-width: 500px;
-      text-align: left;
+      text-align: center;
       position: relative;
+      border-radius: 5px;
     }
     .close-modal {
       color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
       position: absolute;
       right: 10px;
       top: 5px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h2>
-    <img src="file:///C:/Users/PCM/Downloads/CNL_imresizer%20(1).png" class="crypto-logo" alt="Custom Logo" />
+    <img src="https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png" class="crypto-logo" alt="Custom Logo" />
     CoinNewList
   </h2>
 
@@ -167,7 +176,7 @@
     </table>
   </div>
 
-  <!-- Modal to display coin details -->
+  <!-- Modal to display coin details and status -->
   <div id="coinModal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
@@ -181,61 +190,79 @@
     // Global cache for coin details
     const coinCache = {};
 
-    // Modal functions
+    // Modal functions with fade-in/out effects.
     function showModal(content) {
       const modal = document.getElementById("coinModal");
       const modalBody = document.getElementById("modalBody");
       modalBody.innerHTML = content;
-      modal.style.display = "block";
+      modal.classList.add("show");
     }
     function closeModal() {
-      document.getElementById("coinModal").style.display = "none";
+      const modal = document.getElementById("coinModal");
+      modal.classList.remove("show");
+      // Optionally hide after transition
+      setTimeout(() => { modal.style.display = "none"; }, 300);
     }
     document.querySelector(".close-modal").onclick = closeModal;
     window.onclick = function(event) {
       if (event.target == document.getElementById("coinModal")) {
         closeModal();
       }
+    };
+
+    // Function to update modal and redirect
+    function updateAndRedirect(coinId, data) {
+      let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
+      let content = `<p><strong>${data.name}</strong></p>`;
+      if (officialWebsite) {
+        content += `<p>Redirecting to official website...</p>`;
+        showModal(content);
+        setTimeout(() => {
+          window.open(officialWebsite, '_blank');
+          closeModal();
+        }, 800);
+      } else {
+        content += `<p>Redirecting to CoinGecko page...</p>`;
+        showModal(content);
+        setTimeout(() => {
+          window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
+          closeModal();
+        }, 800);
+      }
     }
 
-    // Open the official website for a coin (or show details in a modal)
+    // When a coin is clicked, show the modal immediately and then redirect.
     function openOfficialWebsite(coinId, coinSymbol) {
-      // If ADA, use custom link immediately
+      // Show modal instantly with a loading message.
+      showModal("<p>Loading coin details...</p>");
+      
+      // Special handling for ADA.
       if (coinSymbol.toUpperCase() === "ADA") {
-        showModal(`<p><strong>Coinnewlist (CoinNewList)</strong></p>
-                   <p><a href="https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D" target="_blank">Visit Official Website</a></p>`);
+        setTimeout(() => {
+          window.open("https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D", '_blank');
+          closeModal();
+        }, 800);
         return;
       }
       
-      // Check if coin details are cached
+      // If details are cached, update and redirect.
       if (coinCache[coinId]) {
-        let officialWebsite = coinCache[coinId].links.homepage.find(url => url && url.trim() !== "");
-        let content = `<p><strong>${coinCache[coinId].name}</strong></p>`;
-        if (officialWebsite) {
-          content += `<p><a href="${officialWebsite}" target="_blank">Visit Official Website</a></p>`;
-        } else {
-          content += `<p><a href="https://www.coingecko.com/en/coins/${coinId}" target="_blank">View on CoinGecko</a></p>`;
-        }
-        showModal(content);
+        updateAndRedirect(coinId, coinCache[coinId]);
       } else {
-        // Show modal immediately while fetching details
-        showModal("<p>Loading coin details...</p>");
+        // Otherwise, fetch the details then update and redirect.
         fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
           .then(response => response.json())
           .then(data => {
-            coinCache[coinId] = data; // Cache the data
-            let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
-            let content = `<p><strong>${data.name}</strong></p>`;
-            if (officialWebsite) {
-              content += `<p><a href="${officialWebsite}" target="_blank">Visit Official Website</a></p>`;
-            } else {
-              content += `<p><a href="https://www.coingecko.com/en/coins/${coinId}" target="_blank">View on CoinGecko</a></p>`;
-            }
-            showModal(content);
+            coinCache[coinId] = data;
+            updateAndRedirect(coinId, data);
           })
           .catch(error => {
             console.error("Error fetching coin details:", error);
-            showModal(`<p>Error loading details. <a href="https://www.coingecko.com/en/coins/${coinId}" target="_blank">View on CoinGecko</a></p>`);
+            showModal(`<p>Error loading details. Redirecting to CoinGecko page...</p>`);
+            setTimeout(() => {
+              window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
+              closeModal();
+            }, 800);
           });
       }
     }
@@ -338,7 +365,7 @@
     window.onload = () => {
       fetchTrendingCrypto();
       fetchCryptoData();
-      // Update intervals set to 5000ms
+      // Refresh data every 5000ms
       setInterval(fetchCryptoData, 5000);
       setInterval(fetchTrendingCrypto, 5000);
     };
