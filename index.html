@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cryptocurrency Live Price</title>
+  <title>CoinNewList</title>
   <style>
     html, body {
       margin: 0;
@@ -95,12 +95,12 @@
         text-align: center;
       }
     }
-    /* Simple loading indicator style */
+    /* Loading indicator style */
     .loading {
       font-style: italic;
       color: #888;
     }
-    /* Modal styles with smooth fade in/out */
+    /* Modal styles with fade effects */
     .modal {
       display: none;
       position: fixed;
@@ -111,7 +111,7 @@
       height: 100%;
       background-color: rgba(0,0,0,0.4);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.2s ease;
     }
     .modal.show {
       display: block;
@@ -181,7 +181,7 @@
     <div class="modal-content">
       <span class="close-modal">&times;</span>
       <div id="modalBody">
-        <p>Loading coin details...</p>
+        <p>Loading data...</p>
       </div>
     </div>
   </div>
@@ -200,8 +200,7 @@
     function closeModal() {
       const modal = document.getElementById("coinModal");
       modal.classList.remove("show");
-      // Optionally hide after transition
-      setTimeout(() => { modal.style.display = "none"; }, 300);
+      setTimeout(() => { modal.style.display = "none"; }, 200);
     }
     document.querySelector(".close-modal").onclick = closeModal;
     window.onclick = function(event) {
@@ -210,46 +209,40 @@
       }
     };
 
-    // Function to update modal and redirect
+    // Function to update modal and redirect immediately.
     function updateAndRedirect(coinId, data) {
       let officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
       let content = `<p><strong>${data.name}</strong></p>`;
       if (officialWebsite) {
-        content += `<p>Redirecting to official website...</p>`;
+        content += `<p>Redirecting...</p>`;
         showModal(content);
-        setTimeout(() => {
-          window.open(officialWebsite, '_blank');
-          closeModal();
-        }, 800);
+        // Immediate redirection without delay
+        window.open(officialWebsite, '_blank');
+        closeModal();
       } else {
-        content += `<p>Redirecting to CoinGecko page...</p>`;
+        content += `<p>Redirecting to CoinGecko...</p>`;
         showModal(content);
-        setTimeout(() => {
-          window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
-          closeModal();
-        }, 800);
+        window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
+        closeModal();
       }
     }
 
-    // When a coin is clicked, show the modal immediately and then redirect.
+    // When a coin is clicked, show modal with "Loading data..." immediately.
     function openOfficialWebsite(coinId, coinSymbol) {
-      // Show modal instantly with a loading message.
-      showModal("<p>Loading coin details...</p>");
+      showModal("<p>Loading data...</p>");
       
-      // Special handling for ADA.
+      // Special handling for ADA: immediate redirect.
       if (coinSymbol.toUpperCase() === "ADA") {
-        setTimeout(() => {
-          window.open("https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D", '_blank');
-          closeModal();
-        }, 800);
+        window.open("https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D", '_blank');
+        closeModal();
         return;
       }
       
-      // If details are cached, update and redirect.
+      // If details are cached, update and redirect immediately.
       if (coinCache[coinId]) {
         updateAndRedirect(coinId, coinCache[coinId]);
       } else {
-        // Otherwise, fetch the details then update and redirect.
+        // Otherwise, fetch details and then update and redirect.
         fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
           .then(response => response.json())
           .then(data => {
@@ -258,11 +251,9 @@
           })
           .catch(error => {
             console.error("Error fetching coin details:", error);
-            showModal(`<p>Error loading details. Redirecting to CoinGecko page...</p>`);
-            setTimeout(() => {
-              window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
-              closeModal();
-            }, 800);
+            showModal("<p>Error loading details. Redirecting...</p>");
+            window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
+            closeModal();
           });
       }
     }
