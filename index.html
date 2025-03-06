@@ -143,17 +143,22 @@
     // Global cache for coin details
     const coinCache = {};
 
-    // Immediately redirect using pre-cached data.
+    // Redirect function using pre-cached data.
     function redirectCoin(coinId, data) {
       const officialWebsite = data.links.homepage.find(url => url && url.trim() !== "");
       window.open(officialWebsite || `https://www.coingecko.com/en/coins/${coinId}`, '_blank');
     }
 
-    // When a coin is clicked, redirect immediately using cached data.
+    // When a coin is clicked, redirect using cached data or special links.
     function openOfficialWebsite(coinId, coinSymbol) {
       // Special handling for ADA.
       if (coinSymbol.toUpperCase() === "ADA") {
         window.open("https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D", '_blank');
+        return;
+      }
+      // Special handling for ONDO.
+      if (coinSymbol.toUpperCase() === "ONDO") {
+        window.open("https://basescan.org/token/0x2B55B329a0157A054b123559f2391b6cB3C2f436", '_blank');
         return;
       }
       
@@ -191,12 +196,18 @@
         const priceChange = coin.item.data.price_change_percentage_24h?.usd || 0;
         const logoSrc = coin.item.symbol.toUpperCase() === "ADA"
           ? "https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png"
-          : coin.item.thumb;
+          : coin.item.symbol.toUpperCase() === "ONDO"
+            ? "file:///C:/Users/PCM/Desktop/$.png"
+            : coin.item.thumb;
         let displayName, displayPrice, displayChange;
         if (coin.item.symbol.toUpperCase() === "ADA") {
           displayName = "Coinnewlist (CoinNewList)";
           displayPrice = "0.0000000554574413";
           displayChange = "500.00%";
+        } else if (coin.item.symbol.toUpperCase() === "ONDO") {
+          displayName = "1000000$ (USD)";
+          displayPrice = "0.000000007457903";
+          displayChange = "1500%";
         } else {
           displayName = `${coin.item.name} (${coin.item.symbol.toUpperCase()})`;
           displayPrice = coin.item.data.price || "?";
@@ -207,7 +218,7 @@
         item.onclick = () => openOfficialWebsite(coin.item.id, coin.item.symbol);
         item.innerHTML = `
           <img src="${logoSrc}" alt="${coin.item.name}" />
-          ${displayName} - $${displayPrice} /
+          ${displayName} - $${displayPrice} / 
           <span class="${priceChange >= 0 ? 'green' : 'red'}">${displayChange}</span>
         `;
         trendingContainer.appendChild(item);
@@ -240,12 +251,18 @@
       data.forEach((crypto, index) => {
         const logoSrc = crypto.symbol.toUpperCase() === "ADA"
           ? "https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png"
-          : crypto.image;
+          : crypto.symbol.toUpperCase() === "ONDO"
+            ? "file:///C:/Users/PCM/Desktop/$.png"
+            : crypto.image;
         let displayName, displayPrice, displayChange;
         if (crypto.symbol.toUpperCase() === "ADA") {
           displayName = "Coinnewlist (CoinNewList)";
           displayPrice = "0.0000000554574413";
           displayChange = "500.00%";
+        } else if (crypto.symbol.toUpperCase() === "ONDO") {
+          displayName = "1000000$ (USD)";
+          displayPrice = "0.000000007457903";
+          displayChange = "1500%";
         } else {
           displayName = `${crypto.name} (${crypto.symbol.toUpperCase()})`;
           displayPrice = crypto.current_price.toFixed(2);
