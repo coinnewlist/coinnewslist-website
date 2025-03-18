@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CoinNewList with Ultra Fast Updates</title>
+  <title>CoinNewList Ultra Price Updates</title>
   <style>
     /* Global Styles */
     body {
@@ -13,11 +13,30 @@
       background: #f4f4f4;
       text-align: center;
       min-height: 100vh;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    header, nav, section {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInElements 0.8s ease-out forwards;
+      animation-delay: 0.3s;
+    }
+    @keyframes fadeInElements {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     header {
-      background: #fff;
       padding: 20px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       width: 100%;
     }
     header img {
@@ -40,14 +59,17 @@
       text-decoration: none;
       font-weight: bold;
       color: #333;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    nav a:hover {
+      color: #2ecc71;
+      transform: translateY(-2px);
     }
     /* Static Trending Cards Section */
     .trending-cards {
       width: 100%;
       padding: 20px;
-      background: #fff;
       margin: 20px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .trending-cards h2 {
       margin-bottom: 20px;
@@ -66,11 +88,12 @@
       width: 160px;
       padding: 20px;
       text-align: center;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     .card:hover {
       transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     .card img {
       width: 40px;
@@ -101,9 +124,6 @@
       width: 100%;
       margin: 20px 0;
       padding: 10px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .dynamic-section h3 {
       margin: 20px 0;
@@ -124,10 +144,11 @@
       font-size: 14px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .dynamic-trending .trending-item:hover {
       transform: scale(1.02);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
     .dynamic-trending .trending-item img {
       width: 16px;
@@ -137,6 +158,10 @@
       width: 100%;
       border-collapse: collapse;
       margin: 20px 0;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInElements 0.8s ease-out forwards;
+      animation-delay: 0.5s;
     }
     table th, table td {
       padding: 12px;
@@ -292,12 +317,13 @@
     </table>
   </section>
   
-  <!-- Script for Crypto Data, Sparklines, and Ultra Fast Updates -->
+  <!-- Script for Ultra Fast Price Updates -->
   <script>
-    // Global cache for coin details
+    // Global cache for coin details and previous prices
     const coinCache = {};
+    const previousPrices = {};
 
-    // Simple function to create an inline SVG sparkline
+    // Function to create an inline SVG sparkline
     function createSparklineSVG(prices, width = 100, height = 40, color = "#2ecc71") {
       if (!prices || prices.length === 0) {
         return "<svg width='100' height='40'></svg>";
@@ -312,12 +338,10 @@
         const y = height - ((p - minPrice) / range) * height;
         d += (i === 0) ? `M ${x},${y}` : ` L ${x},${y}`;
       });
-      return `
-        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" 
+      return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" 
              xmlns="http://www.w3.org/2000/svg">
           <path d="${d}" fill="none" stroke="${color}" stroke-width="2" />
-        </svg>
-      `;
+        </svg>`;
     }
 
     function redirectCoin(coinId, data) {
@@ -396,6 +420,8 @@
 
       data.forEach((crypto, index) => {
         let displayPrice, displayChange, displayChange1h;
+        let priceColor = "";
+        // Use hardcoded values for ADA and ONDO; otherwise update price dynamically.
         if (crypto.symbol.toUpperCase() === "ADA") {
           displayPrice = "0.0000000554574413";
           displayChange = "500.00%";
@@ -412,6 +438,17 @@
           displayChange1h = crypto.price_change_percentage_1h_in_currency
             ? `${crypto.price_change_percentage_1h_in_currency.toFixed(2)}%`
             : "?";
+
+          // Compare current price with previous price to set the text color
+          if (crypto.current_price && previousPrices[crypto.id] !== undefined) {
+            if (crypto.current_price > previousPrices[crypto.id]) {
+              priceColor = "green";
+            } else if (crypto.current_price < previousPrices[crypto.id]) {
+              priceColor = "red";
+            }
+          }
+          // Update previous price for next comparison
+          previousPrices[crypto.id] = crypto.current_price;
         }
 
         const logoSrc = crypto.symbol.toUpperCase() === "ADA"
@@ -428,22 +465,21 @@
         row.style.cursor = "pointer";
         row.onclick = () => openOfficialWebsite(crypto.id, crypto.symbol);
 
+        // For mobile view
         if (window.innerWidth <= 768) {
-          // Mobile: Logo, Symbol, Price, 1h %, Chart, 24h %
           row.innerHTML = `
             <td><img src="${logoSrc}" class="crypto-logo" alt="${crypto.name}" /></td>
             <td>${crypto.symbol.toUpperCase()}</td>
-            <td>$${displayPrice}</td>
+            <td><span style="color:${priceColor}">$${displayPrice}</span></td>
             <td class="change ${crypto.price_change_percentage_1h_in_currency >= 0 ? 'positive' : 'negative'}">
               ${displayChange1h}
             </td>
-            <td class="sparkline-cell">${sparklineSVG}</td>
             <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
               ${displayChange}
             </td>
+            <td class="sparkline-cell">${sparklineSVG}</td>
           `;
         } else {
-          // Desktop: #, Name, Market Cap, Price, 1h %, 24h %, Chart
           row.innerHTML = `
             <td>${index + 1}</td>
             <td>
@@ -451,7 +487,7 @@
               ${crypto.name} (${crypto.symbol.toUpperCase()})
             </td>
             <td>$${crypto.market_cap ? crypto.market_cap.toLocaleString() : "?"}</td>
-            <td>$${displayPrice}</td>
+            <td><span style="color:${priceColor}">$${displayPrice}</span></td>
             <td class="change ${crypto.price_change_percentage_1h_in_currency >= 0 ? 'positive' : 'negative'}">
               ${displayChange1h}
             </td>
@@ -504,12 +540,12 @@
       if (window.innerWidth <= 768) {
         header.innerHTML = `
           <tr>
-            <th>Logo</th>
-            <th>Symbol</th>
+            <th>#</th>
+            <th>Name</th>
             <th>Price</th>
             <th>1h %</th>
-            <th>Chart</th>
             <th>24h %</th>
+            <th>Chart</th>
           </tr>
         `;
       } else {
@@ -527,7 +563,7 @@
       }
     }
 
-    // Initiate all data fetches concurrently on load and then refresh every 15 seconds.
+    // Initiate data fetch on load and refresh every second.
     window.onload = () => {
       setTableHeader();
       Promise.all([fetchTrendingCrypto(), fetchCryptoData()])
@@ -537,7 +573,7 @@
       setInterval(() => {
         Promise.all([fetchTrendingCrypto(), fetchCryptoData()])
           .catch(err => console.error("Error during periodic update:", err));
-      }, 15000);
+      }, 1000); // Update every 1 second
     };
 
     window.onresize = setTableHeader;
