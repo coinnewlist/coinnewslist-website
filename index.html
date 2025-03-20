@@ -235,28 +235,28 @@
     <div class="cards-container">
       <!-- Existing static crypto cards -->
       <div class="card">
-        <img src="https://placehold.co/40x40?text=GT" alt="GT Protocol">
-        <div class="coin-name">GT Protocol</div>
-        <div class="price">$0.2343</div>
-        <div class="change positive">+5.80%</div>
+        <img src="https://pbs.twimg.com/media/GmVkPRKaYAA6rhL?format=jpg&name=4096x4096" alt="CoinNewList">
+        <div class="coin-name">Coinewlist</div>
+        <div class="price">$0.000001</div>
+        <div class="change positive">+1500%</div>
       </div>
       <div class="card">
-        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=024" alt="Bitcoin">
-        <div class="coin-name">Bitcoin</div>
-        <div class="price">$89,195.15</div>
-        <div class="change negative">-0.44%</div>
+        <img src="https://pbs.twimg.com/media/GmVRPRvasAA6aTJ?format=png&name=240x240" alt="USD">
+        <div class="coin-name">1000000$</div>
+        <div class="price">$0.000001</div>
+        <div class="change negative">-500%</div>
       </div>
       <div class="card">
-        <img src="https://cryptologos.cc/logos/xrp-xrp-logo.svg?v=024" alt="XRP">
-        <div class="coin-name">XRP</div>
-        <div class="price">$2.5222</div>
-        <div class="change negative">-3.07%</div>
+        <img src="https://pbs.twimg.com/media/GmY3dBBaQAAw7a4?format=png&name=360x360" alt="XRP">
+        <div class="coin-name">Global Network</div>
+        <div class="price">$0.0000001</div>
+        <div class="change negative">-200%</div>
       </div>
       <div class="card">
-        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=024" alt="Ethereum">
-        <div class="coin-name">Ethereum</div>
-        <div class="price">$2,200.00</div>
-        <div class="change negative">-1.20%</div>
+        <img src="https://pbs.twimg.com/media/GmY9Vo5a8AMSv97?format=jpg&name=900x900" alt="Ethereum">
+        <div class="coin-name">Global NFT</div>
+        <div class="price">$0.0000009</div>
+        <div class="change negative">-150%</div>
       </div>
       <div class="card">
         <img src="https://cryptologos.cc/logos/cardano-ada-logo.svg?v=024" alt="Cardano">
@@ -287,6 +287,13 @@
         <div class="coin-name">Dogecoin</div>
         <div class="price">$0.065</div>
         <div class="change negative">-2.30%</div>
+      </div>
+      <!-- New static card for BNB -->
+      <div class="card">
+        <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.svg?v=024" alt="BNB">
+        <div class="coin-name">BNB</div>
+        <div class="price">$320.45</div>
+        <div class="change positive">+2.10%</div>
       </div>
     </div>
   </section>
@@ -379,21 +386,20 @@
       trendingContainer.innerHTML = "";
       data.coins.forEach(coin => {
         const priceChange = coin.item.data.price_change_percentage_24h?.usd || 0;
-        const logoSrc = coin.item.symbol.toUpperCase() === "ADA"
-          ? "https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png"
-          : coin.item.symbol.toUpperCase() === "ONDO"
-            ? "https://xbitcoin.space/wp-content/uploads/2025/03/unnamed-file.png"
-            : coin.item.thumb;
+        let logoSrc;
         let displayName, displayPrice, displayChange;
-        if (coin.item.symbol.toUpperCase() === "ADA") {
+        if (coin.item.symbol.toUpperCase() === "CoinNewList") {
+          logoSrc = "https://pbs.twimg.com/media/GmVRPRvasAA6aTJ?format=png&name=240x240";
           displayName = "Coinnewlist (CoinNewList)";
           displayPrice = "0.0000000554574413";
           displayChange = "500.00%";
-        } else if (coin.item.symbol.toUpperCase() === "ONDO") {
-          displayName = "1000000$ (USD)";
-          displayPrice = "0.000000007457903";
+        } else if (coin.item.symbol.toUpperCase() === "USD") {
+          logoSrc = "https://pbs.twimg.com/media/GmVRPRvasAA6aTJ?format=png&name=240x240";
+          displayName = "1000000$";
+          displayPrice = "1000000$";
           displayChange = "1500%";
         } else {
+          logoSrc = coin.item.thumb;
           displayName = `${coin.item.name} (${coin.item.symbol.toUpperCase()})`;
           displayPrice = coin.item.data.price || "?";
           displayChange = `${priceChange.toFixed(2)}%`;
@@ -401,13 +407,19 @@
         const item = document.createElement("div");
         item.className = "trending-item";
         item.onclick = () => openOfficialWebsite(coin.item.id, coin.item.symbol);
-        item.innerHTML = `
-          <img src="${logoSrc}" alt="${coin.item.name}" />
+        item.innerHTML = 
+          `<img src="${logoSrc}" alt="${displayName}" />
           ${displayName} - $${displayPrice} / 
-          <span class="${priceChange >= 0 ? 'positive' : 'negative'}">${displayChange}</span>
-        `;
+          <span class="${priceChange >= 0 ? 'positive' : 'negative'}">${displayChange}</span>`;
         trendingContainer.appendChild(item);
       });
+      // Append a static trending item for BNB
+      const bnbItem = document.createElement("div");
+      bnbItem.className = "trending-item";
+      bnbItem.onclick = () => alert('Dummy redirect: BNB');
+      bnbItem.innerHTML = `<img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.svg?v=024" alt="BNB" />
+                           BNB (BNB) - $320.45 / <span class="positive">+2.10%</span>`;
+      trendingContainer.appendChild(bnbItem);
     }
 
     function updateCryptoUI(data) {
@@ -421,15 +433,43 @@
       data.forEach((crypto, index) => {
         let displayPrice, displayChange, displayChange1h;
         let priceColor = "";
-        // Use hardcoded values for ADA and ONDO; otherwise update price dynamically.
-        if (crypto.symbol.toUpperCase() === "ADA") {
+        let logoSrc = crypto.image;
+        // Handle hardcoded values for CoinNewList and USD
+        if (crypto.symbol.toUpperCase() === "CoiNewlist") {
           displayPrice = "0.0000000554574413";
           displayChange = "500.00%";
           displayChange1h = "N/A";
-        } else if (crypto.symbol.toUpperCase() === "ONDO") {
-          displayPrice = "0.000000007457903";
+        } else if (crypto.symbol.toUpperCase() === "USD") {
+          displayPrice = "0.000001$";
           displayChange = "1500%";
-          displayChange1h = "N/A";
+          displayChange1h = "100%";
+          const displaySymbol = "USD";
+          logoSrc = "https://pbs.twimg.com/media/GmVRPRvasAA6aTJ?format=png&name=240x240";
+          const row = document.createElement("tr");
+          row.style.cursor = "pointer";
+          row.onclick = () => openOfficialWebsite(crypto.id, crypto.symbol);
+          // Generate a sparkline chart for BNB using dummy data
+          const bnbSparkline = createSparklineSVG([320, 322, 321, 323, 324, 322, 325], 80, 30, "#2ecc71");
+          if (window.innerWidth <= 768) {
+            row.innerHTML = 
+              `<td><img src="${logoSrc}" class="crypto-logo" alt="1000000$" /></td>
+               <td>${displaySymbol}</td>
+               <td><span style="color:${priceColor}">$${displayPrice}</span></td>
+               <td class="change positive">${displayChange1h}</td>
+               <td class="change positive">${displayChange}</td>
+               <td class="sparkline-cell">${bnbSparkline}</td>`;
+          } else {
+            row.innerHTML = 
+              `<td>${index + 1}</td>
+               <td><img src="${logoSrc}" class="crypto-logo" alt="1000000$" /> 1000000$ (${displaySymbol})</td>
+               <td>$${crypto.market_cap ? crypto.market_cap.toLocaleString() : "?"}</td>
+               <td><span style="color:${priceColor}">$${displayPrice}</span></td>
+               <td class="change positive">${displayChange1h}</td>
+               <td class="change positive">${displayChange}</td>
+               <td class="sparkline-cell">${bnbSparkline}</td>`;
+          }
+          tableBody.appendChild(row);
+          return; // Skip further processing for ONDO
         } else {
           displayPrice = crypto.current_price ? crypto.current_price.toFixed(2) : "?";
           displayChange = crypto.price_change_percentage_24h
@@ -439,7 +479,6 @@
             ? `${crypto.price_change_percentage_1h_in_currency.toFixed(2)}%`
             : "?";
 
-          // Compare current price with previous price to set the text color
           if (crypto.current_price && previousPrices[crypto.id] !== undefined) {
             if (crypto.current_price > previousPrices[crypto.id]) {
               priceColor = "green";
@@ -447,16 +486,9 @@
               priceColor = "red";
             }
           }
-          // Update previous price for next comparison
           previousPrices[crypto.id] = crypto.current_price;
         }
 
-        const logoSrc = crypto.symbol.toUpperCase() === "ADA"
-          ? "https://xbitcoin.space/wp-content/uploads/2025/02/CNL_imresizer-1.png"
-          : crypto.symbol.toUpperCase() === "ONDO"
-            ? "https://via.placeholder.com/20"
-            : crypto.image;
-        
         const lineColor = (crypto.price_change_percentage_24h || 0) >= 0 ? "#2ecc71" : "#e74c3c";
         const sparklineArray = crypto.sparkline_in_7d?.price || [];
         const sparklineSVG = createSparklineSVG(sparklineArray, 80, 30, lineColor);
@@ -465,37 +497,34 @@
         row.style.cursor = "pointer";
         row.onclick = () => openOfficialWebsite(crypto.id, crypto.symbol);
 
-        // For mobile view
         if (window.innerWidth <= 768) {
-          row.innerHTML = `
-            <td><img src="${logoSrc}" class="crypto-logo" alt="${crypto.name}" /></td>
-            <td>${crypto.symbol.toUpperCase()}</td>
-            <td><span style="color:${priceColor}">$${displayPrice}</span></td>
-            <td class="change ${crypto.price_change_percentage_1h_in_currency >= 0 ? 'positive' : 'negative'}">
-              ${displayChange1h}
-            </td>
-            <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
-              ${displayChange}
-            </td>
-            <td class="sparkline-cell">${sparklineSVG}</td>
-          `;
+          row.innerHTML = 
+            `<td><img src="${logoSrc}" class="crypto-logo" alt="${crypto.name}" /></td>
+             <td>${crypto.symbol.toUpperCase()}</td>
+             <td><span style="color:${priceColor}">$${displayPrice}</span></td>
+             <td class="change ${crypto.price_change_percentage_1h_in_currency >= 0 ? 'positive' : 'negative'}">
+               ${displayChange1h}
+             </td>
+             <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
+               ${displayChange}
+             </td>
+             <td class="sparkline-cell">${sparklineSVG}</td>`;
         } else {
-          row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>
-              <img src="${logoSrc}" class="crypto-logo" alt="${crypto.name}" />
-              ${crypto.name} (${crypto.symbol.toUpperCase()})
-            </td>
-            <td>$${crypto.market_cap ? crypto.market_cap.toLocaleString() : "?"}</td>
-            <td><span style="color:${priceColor}">$${displayPrice}</span></td>
-            <td class="change ${crypto.price_change_percentage_1h_in_currency >= 0 ? 'positive' : 'negative'}">
-              ${displayChange1h}
-            </td>
-            <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
-              ${displayChange}
-            </td>
-            <td class="sparkline-cell">${sparklineSVG}</td>
-          `;
+          row.innerHTML = 
+            `<td>${index + 1}</td>
+             <td>
+               <img src="${logoSrc}" class="crypto-logo" alt="${crypto.name}" />
+               ${crypto.name} (${crypto.symbol.toUpperCase()})
+             </td>
+             <td>$${crypto.market_cap ? crypto.market_cap.toLocaleString() : "?"}</td>
+             <td><span style="color:${priceColor}">$${displayPrice}</span></td>
+             <td class="change ${crypto.price_change_percentage_1h_in_currency >= 0 ? 'positive' : 'negative'}">
+               ${displayChange1h}
+             </td>
+             <td class="change ${crypto.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
+               ${displayChange}
+             </td>
+             <td class="sparkline-cell">${sparklineSVG}</td>`;
         }
         tableBody.appendChild(row);
       });
@@ -520,7 +549,6 @@
         const data = await response.json();
         updateCryptoUI(data);
 
-        // Prefetch coin details concurrently using Promise.all
         const fetchDetailsPromises = data
           .filter(crypto => crypto.symbol.toUpperCase() !== "ADA")
           .map(crypto =>
@@ -538,19 +566,18 @@
     function setTableHeader() {
       const header = document.getElementById("tableHeader");
       if (window.innerWidth <= 768) {
-        header.innerHTML = `
-          <tr>
+        header.innerHTML = 
+          `<tr>
             <th>#</th>
             <th>Name</th>
             <th>Price</th>
             <th>1h %</th>
             <th>24h %</th>
             <th>Chart</th>
-          </tr>
-        `;
+          </tr>`;
       } else {
-        header.innerHTML = `
-          <tr>
+        header.innerHTML = 
+          `<tr>
             <th>#</th>
             <th>Name</th>
             <th>Market Cap</th>
@@ -558,12 +585,10 @@
             <th>1h %</th>
             <th>24h %</th>
             <th>Chart</th>
-          </tr>
-        `;
+          </tr>`;
       }
     }
 
-    // Initiate data fetch on load and refresh every second.
     window.onload = () => {
       setTableHeader();
       Promise.all([fetchTrendingCrypto(), fetchCryptoData()])
@@ -580,5 +605,6 @@
   </script>
 </body>
 </html>
+
 
 
