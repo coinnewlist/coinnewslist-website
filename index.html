@@ -1,596 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CoinNewList Ultra - Real-Time Prices</title>
-  <style>
-    /* Critical CSS - Loads first */
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f4f4f4;
-      color: #333;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    
-    .loading {
-      padding: 2rem;
-      text-align: center;
-      font-style: italic;
-      color: #666;
-    }
-    
-    /* Defer non-critical CSS */
-    .non-critical-css {
-      display: none;
-    }
-  </style>
-  <!-- Preload important resources -->
-  <link rel="preload" href="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=1h,24h" as="fetch" crossorigin>
-  <link rel="preconnect" href="https://api.coingecko.com">
-  <link rel="preconnect" href="https://ws.coingecko.com">
-  <link rel="preconnect" href="https://cryptologos.cc">
-  <link rel="dns-prefetch" href="https://api.coingecko.com">
-  <link rel="dns-prefetch" href="https://ws.coingecko.com">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowchain - The Coolest Blockchain</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.2em;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1e90ff;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .blockchain-visual {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .block {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+            color: white;
+            border-radius: 10px;
+            margin: 10px;
+            text-align: center;
+            line-height: 80px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .block::after {
+            content: "↓";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #333;
+        }
+        
+        .block:last-child::after {
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+        
+        .tokenomics {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #1e90ff, #00bfff);
+            width: 100%;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="header-content">
-      <img src="https://avatars.githubusercontent.com/u/198788596?s=400&u=ac4377a892d8ced8eb20d8091325af5e7c8f24ad&v=4" alt="CoinNewList Logo" loading="lazy">
-      <h1>CoinNewList</h1>
+    <div class="container">
+        <header>
+            <h1>❄️ Snowchain</h1>
+            <div class="tagline">The Coolest Blockchain on the Internet</div>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Total Supply</div>
+                <div class="stat-value">1T</div>
+                <div class="stat-label">SNOW Tokens</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-label">Block Time</div>
+                <div class="stat-value">2s</div>
+                <div class="stat-label">Fast Transactions</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-label">Consensus</div>
+                <div class="stat-value">PoS</div>
+                <div class="stat-label">Proof-of-Snow</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-label">TPS</div>
+                <div class="stat-value">10k</div>
+                <div class="stat-label">Transactions</div>
+            </div>
+        </div>
+        
+        <div class="blockchain-visual">
+            <h2>Snowchain in Action</h2>
+            <p>Our revolutionary Proof-of-Snow consensus keeps the network fast and secure.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <div class="block">1</div>
+                <div class="block">2</div>
+                <div class="block">3</div>
+                <div class="block">4</div>
+                <div class="block">5</div>
+                <div class="block">...</div>
+            </div>
+            
+            <p>Each block contains transactions validated by our network of snow nodes, ensuring your assets stay frozen (secure) until you're ready to use them.</p>
+        </div>
+        
+        <div class="tokenomics">
+            <h2>Tokenomics</h2>
+            <p>Snowchain has a fixed total supply of 1,000,000,000,000 (1 trillion) SNOW tokens.</p>
+            
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between;">
+                <div>Total Supply: 1,000,000,000,000 SNOW</div>
+                <div>100%</div>
+            </div>
+            
+            <h3>Distribution</h3>
+            <ul>
+                <li><strong>60%</strong> - Community rewards and staking</li>
+                <li><strong>20%</strong> - Development fund</li>
+                <li><strong>10%</strong> - Early backers</li>
+                <li><strong>10%</strong> - Foundation reserve</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>© 2023 Snowchain Foundation. All rights reserved.</p>
+            <p>The future of decentralized applications is snow here.</p>
+        </footer>
     </div>
-  </header>
-
-  <!-- Navigation -->
-  <nav>
-    <a href="#">All Crypto</a>
-    <a href="https://coinnewlist.github.io/newlist/">NewList</a>
-    <a href="https://coinnewlist.github.io/Trending/">Trending</a>
-    <a href="#">News</a>
-  </nav>
-  
-  <!-- Static Trending Cards Section -->
-  <section>
-    <h2>New Cryptos</h2>
-    <div class="cards-container" id="cardsContainer">
-      <!-- Will be populated by JavaScript -->
-      <div class="loading">Loading crypto cards...</div>
-    </div>
-  </section>
-  
-  <!-- Dynamic Section -->
-  <section>
-    <h3>Most Visited Cryptocurrencies</h3>
-    <div class="dynamic-trending" id="trendingContainer">
-      <!-- Will be populated by JavaScript -->
-      <div class="loading">Loading trending data...</div>
-    </div>
-    
-    <div class="table-container">
-      <table>
-        <thead id="tableHeader">
-          <!-- Will be populated by JavaScript -->
-        </thead>
-        <tbody id="cryptoTableBody">
-          <tr>
-            <td colspan="7" class="loading">Loading crypto data...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- Connection Status Indicator -->
-  <div id="connectionStatus" class="connection-status disconnected">
-    <span class="status-indicator disconnected"></span>
-    <span>Connecting...</span>
-  </div>
-  
-  <!-- Load non-critical CSS asynchronously -->
-  <link rel="stylesheet" href="data:text/css;base64,${btoa(`
-    :root {
-      --primary: #2ecc71;
-      --primary-dark: #27ae60;
-      --negative: #e74c3c;
-      --negative-dark: #c0392b;
-      --text: #333;
-      --text-light: #666;
-      --bg: #f4f4f4;
-      --card-bg: #fff;
-      --border: #eee;
-      --shadow: 0 2px 4px rgba(0,0,0,0.05);
-      --shadow-hover: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    body {
-      opacity: 0;
-      animation: fadeIn 0.3s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.4s ease-out forwards;
-    }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    header {
-      padding: 1rem 0;
-      text-align: center;
-      position: relative;
-      z-index: 10;
-    }
-
-    .header-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    header img {
-      width: 2rem;
-      height: 2rem;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, var(--primary), #3498db);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    nav {
-      margin: 1rem auto;
-      max-width: 800px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    nav a {
-      padding: 0.5rem;
-      text-decoration: none;
-      font-weight: 600;
-      color: var(--text);
-      border-radius: 50px;
-    }
-
-    /* Cards Section */
-    .cards-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-
-    .card img {
-      width: 2rem;
-      height: 2rem;
-      margin: 0 auto 0.5rem;
-      object-fit: contain;
-    }
-
-    .coin-name {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: 0.9rem;
-    }
-
-    .price {
-      font-size: 0.9rem;
-      margin-bottom: 0.25rem;
-      font-weight: 500;
-    }
-
-    .change {
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .positive {
-      color: var(--primary);
-    }
-
-    .negative {
-      color: var(--negative);
-    }
-
-    /* Trending Items */
-    .dynamic-trending {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      margin: 1rem 0;
-    }
-
-    .trending-item {
-      background: var(--card-bg);
-      padding: 0.5rem;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      font-size: 0.8rem;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-
-    .trending-item img {
-      width: 1rem;
-      height: 1rem;
-      margin-right: 0.5rem;
-      border-radius: 50%;
-    }
-
-    /* Table Styles */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-      margin: 1rem 0;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 600px;
-    }
-
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-    }
-
-    th {
-      background: rgba(248, 249, 250, 0.8);
-      font-weight: 600;
-    }
-
-    .crypto-logo {
-      width: 1.25rem;
-      height: 1.25rem;
-      vertical-align: middle;
-      margin-right: 0.5rem;
-      border-radius: 50%;
-    }
-
-    /* Connection Status */
-    .connection-status {
-      position: fixed;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      padding: 0.5rem;
-      border-radius: 50px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: var(--shadow);
-    }
-
-    .status-indicator {
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 50%;
-    }
-
-    /* Responsive Adjustments */
-    @media (min-width: 768px) {
-      header {
-        padding: 1.5rem 0;
-      }
-      
-      header img {
-        width: 2.5rem;
-        height: 2.5rem;
-      }
-      
-      header h1 {
-        font-size: 1.75rem;
-      }
-      
-      nav {
-        gap: 1rem;
-      }
-      
-      .cards-container {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 1.25rem;
-      }
-      
-      .card {
-        padding: 1.25rem;
-      }
-      
-      .card img {
-        width: 2.5rem;
-        height: 2.5rem;
-      }
-    }
-  `)}" media="print" onload="this.media='all'" class="non-critical-css">
-  
-  <script>
-    // Optimized JavaScript - Loads after DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
-      // Show content immediately while data loads
-      document.body.style.opacity = 1;
-      
-      // Start loading data immediately
-      const state = {
-        coinCache: {},
-        previousPrices: {},
-        trackedCoins: new Set(),
-        cardsData: [
-          {
-            id: 'coinewlist',
-            name: 'Coinewlist',
-            symbol: 'CNL',
-            image: 'https://pbs.twimg.com/media/GmVkPRKaYAA6rhL?format=jpg&name=4096x4096',
-            price: '0.000001',
-            change24h: '+1500%'
-          },
-          {
-            id: '1000000usd',
-            name: '1000000$',
-            symbol: 'USD',
-            image: 'https://pbs.twimg.com/media/GmVRPRvasAA6aTJ?format=png&name=240x240',
-            price: '0.000001',
-            change24h: '-500%'
-          },
-          {
-            id: 'global-network',
-            name: 'Global Network',
-            symbol: 'GN',
-            image: 'https://pbs.twimg.com/media/GmY3dBBaQAAw7a4?format=png&name=360x360',
-            price: '0.0000001',
-            change24h: '-200%'
-          },
-          {
-            id: 'global-nft',
-            name: 'Global NFT',
-            symbol: 'GNT',
-            image: 'https://pbs.twimg.com/media/GmY9Vo5a8AMSv97?format=jpg&name=900x900',
-            price: '0.0000009',
-            change24h: '-150%'
-          },
-          {
-            id: 'cardano',
-            name: 'Cardano',
-            symbol: 'ADA',
-            image: 'https://cryptologos.cc/logos/cardano-ada-logo.svg?v=024',
-            price: '1.23',
-            change24h: '+2.50%'
-          },
-          {
-            id: 'solana',
-            name: 'Solana',
-            symbol: 'SOL',
-            image: 'https://cryptologos.cc/logos/solana-sol-logo.svg?v=024',
-            price: '30.45',
-            change24h: '+4.10%'
-          }
-        ]
-      };
-
-      // DOM Elements
-      const elements = {
-        cardsContainer: document.getElementById('cardsContainer'),
-        trendingContainer: document.getElementById('trendingContainer'),
-        tableHeader: document.getElementById('tableHeader'),
-        tableBody: document.getElementById('cryptoTableBody'),
-        connectionStatus: document.getElementById('connectionStatus')
-      };
-
-      // Immediately render static cards
-      renderCards();
-
-      // Start loading dynamic data
-      Promise.all([
-        fetchTrending(),
-        fetchMarketData()
-      ]).then(([trendingData, marketData]) => {
-        renderTrending(trendingData);
-        renderMarketData(marketData);
-        connectWebSocket();
-      }).catch(error => {
-        console.error('Initial load error:', error);
-      });
-
-      function renderCards() {
-        let html = '';
-        state.cardsData.forEach(card => {
-          const isPositive = card.change24h.startsWith('+');
-          html += `
-            <div class="card" data-coin-id="${card.id}">
-              <img src="${card.image}" alt="${card.name}" loading="lazy">
-              <div class="coin-name">${card.name}</div>
-              <div class="price">$${card.price}</div>
-              <div class="change ${isPositive ? 'positive' : 'negative'}">
-                ${card.change24h}
-              </div>
-            </div>`;
-        });
-        elements.cardsContainer.innerHTML = html;
-      }
-
-      async function fetchTrending() {
-        try {
-          const response = await fetch('https://api.coingecko.com/api/v3/search/trending');
-          return response.ok ? response.json() : null;
-        } catch (error) {
-          console.error('Trending fetch error:', error);
-          return null;
-        }
-      }
-
-      async function fetchMarketData() {
-        try {
-          const response = await fetch(
-            'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=1h,24h'
-          );
-          return response.ok ? response.json() : null;
-        } catch (error) {
-          console.error('Market data fetch error:', error);
-          return null;
-        }
-      }
-
-      function renderTrending(data) {
-        if (!data?.coins) {
-          elements.trendingContainer.innerHTML = `
-            <div class="trending-item error">
-              Failed to load trending data
-            </div>`;
-          return;
-        }
-
-        let html = '';
-        data.coins.slice(0, 10).forEach(coin => {
-          const change24h = coin.item.data.price_change_percentage_24h?.usd || 0;
-          html += `
-            <div class="trending-item" onclick="redirectToCoin('${coin.item.id}', '${coin.item.symbol}')">
-              <img src="${coin.item.thumb}" alt="${coin.item.name}" loading="lazy">
-              ${coin.item.symbol.toUpperCase()} 
-              <span class="${change24h >= 0 ? 'positive' : 'negative'}">
-                ${change24h.toFixed(2)}%
-              </span>
-            </div>`;
-        });
-        elements.trendingContainer.innerHTML = html;
-      }
-
-      function renderMarketData(data) {
-        if (!data?.length) {
-          elements.tableBody.innerHTML = `
-            <tr>
-              <td colspan="7" class="loading error">
-                Failed to load market data
-              </td>
-            </tr>`;
-          return;
-        }
-
-        let html = '';
-        const isMobile = window.innerWidth <= 768;
-        
-        data.forEach((crypto, index) => {
-          const priceChange24h = crypto.price_change_percentage_24h || 0;
-          const priceChange1h = crypto.price_change_percentage_1h_in_currency || 0;
-          const lineColor = priceChange24h >= 0 ? '#2ecc71' : '#e74c3c';
-          
-          if (isMobile) {
-            html += `
-              <tr data-coin-id="${crypto.id}" onclick="redirectToCoin('${crypto.id}', '${crypto.symbol}')">
-                <td><img src="${crypto.image}" class="crypto-logo" alt="${crypto.name}" loading="lazy"></td>
-                <td>${crypto.symbol.toUpperCase()}</td>
-                <td>$${formatPrice(crypto.current_price)}</td>
-                <td class="change ${priceChange1h >= 0 ? 'positive' : 'negative'}">
-                  ${priceChange1h.toFixed(2)}%
-                </td>
-                <td class="change ${priceChange24h >= 0 ? 'positive' : 'negative'}">
-                  ${priceChange24h.toFixed(2)}%
-                </td>
-              </tr>`;
-          } else {
-            html += `
-              <tr data-coin-id="${crypto.id}" onclick="redirectToCoin('${crypto.id}', '${crypto.symbol}')">
-                <td>${index + 1}</td>
-                <td>
-                  <img src="${crypto.image}" class="crypto-logo" alt="${crypto.name}" loading="lazy">
-                  ${crypto.symbol.toUpperCase()}
-                </td>
-                <td>$${(crypto.market_cap / 1000000000).toFixed(2)}B</td>
-                <td>$${formatPrice(crypto.current_price)}</td>
-                <td class="change ${priceChange1h >= 0 ? 'positive' : 'negative'}">
-                  ${priceChange1h.toFixed(2)}%
-                </td>
-                <td class="change ${priceChange24h >= 0 ? 'positive' : 'negative'}">
-                  ${priceChange24h.toFixed(2)}%
-                </td>
-              </tr>`;
-          }
-        });
-
-        elements.tableBody.innerHTML = html;
-      }
-
-      function formatPrice(price) {
-        if (typeof price !== 'number') return price;
-        return price < 1 ? price.toFixed(6).replace(/\.?0+$/, '') : price.toLocaleString();
-      }
-
-      function connectWebSocket() {
-        const socket = new WebSocket('wss://ws.coingecko.com/api/v3');
-        
-        socket.onopen = () => {
-          updateConnectionStatus(true);
-        };
-        
-        socket.onclose = () => {
-          updateConnectionStatus(false);
-        };
-        
-        socket.onerror = (error) => {
-          console.error('WebSocket error:', error);
-        };
-      }
-
-      function updateConnectionStatus(connected) {
-        const statusEl = elements.connectionStatus;
-        const indicator = statusEl.querySelector('.status-indicator');
-        
-        statusEl.className = connected ? 'connection-status connected' : 'connection-status disconnected';
-        indicator.className = connected ? 'status-indicator connected' : 'status-indicator disconnected';
-        statusEl.querySelector('span:last-child').textContent = connected ? 'Live' : 'Offline';
-      }
-
-      window.redirectToCoin = function(coinId, coinSymbol) {
-        if (coinSymbol.toUpperCase() === 'ADA') {
-          window.open('https://basescan.org/token/0x906BC5Cd49bB4B097274AE96f0F45cAe56Eae54D', '_blank');
-          return;
-        }
-        window.open(`https://www.coingecko.com/en/coins/${coinId}`, '_blank');
-      };
-    });
-  </script>
 </body>
 </html>
