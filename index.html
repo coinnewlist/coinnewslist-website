@@ -3,26 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snow Wallet</title>
+    <title>Snow Wallet - Professional Crypto Wallet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --primary: #6e8efb;
+            --secondary: #a777e3;
+            --background: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #777777;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+        }
+
+        .dark-mode {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text: #ffffff;
+            --text-light: #bbbbbb;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
-        
+
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--background);
+            color: var(--text);
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
-        
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            z-index: 100;
+        }
+
         /* Welcome Screen Styles */
         .welcome-screen {
             display: flex;
@@ -31,294 +73,303 @@
             align-items: center;
             height: 100%;
             text-align: center;
+            animation: fadeIn 0.8s ease;
         }
-        
+
         .welcome-title {
             font-size: 24px;
-            margin-bottom: 40px;
-            color: #6e8efb;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 600;
         }
-        
+
         .wallet-brand {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 50px;
-            color: #333;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
         }
-        
+
+        .wallet-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
         .wallet-option {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 15px 25px;
+            border-radius: 12px;
+            padding: 16px 30px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 15px;
             width: 100%;
             max-width: 300px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        
-        /* Main Wallet Styles (hidden by default) */
+
+        .wallet-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(110, 142, 251, 0.4);
+        }
+
+        .wallet-option i {
+            font-size: 18px;
+        }
+
+        /* Main Wallet Styles */
         .wallet-container {
             display: none;
             flex-direction: column;
             height: 100%;
+            animation: slideUp 0.5s ease;
         }
-        
-        /* Security Warning Modal */
-        .security-modal, .recovery-modal, .import-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            justify-content: center;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 30px;
+            padding-top: 10px;
         }
-        
-        .security-content, .recovery-content, .import-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-        
-        .security-title, .recovery-title, .import-title {
+
+        .header h1 {
             font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
+            font-weight: 700;
         }
-        
-        .security-message {
-            margin-bottom: 25px;
-            line-height: 1.6;
-            text-align: left;
-        }
-        
-        .security-message strong {
-            font-weight: bold;
-        }
-        
-        .security-divider {
-            border-top: 1px solid #eee;
-            margin: 20px 0;
-        }
-        
-        .security-confirm {
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        
-        .security-continue, .recovery-done, .import-button {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        
-        /* Recovery Phrase Styles */
-        .recovery-warning {
-            background-color: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            text-align: left;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .phrase-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .phrase-item {
-            background: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 12px;
+
+        .wallet-info {
             display: flex;
             align-items: center;
-            text-align: left;
+            gap: 10px;
         }
-        
-        .phrase-number {
-            font-weight: bold;
-            margin-right: 10px;
-            min-width: 25px;
-            color: #777;
-        }
-        
-        .phrase-word {
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        .copy-button {
+
+        .wallet-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6e8efb;
+            color: white;
             font-weight: bold;
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-        
-        .copy-icon {
-            margin-right: 8px;
             font-size: 18px;
         }
-        
-        /* Import Wallet Styles */
-        .import-instructions {
-            text-align: left;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        .import-textarea {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            resize: none;
-            margin-bottom: 15px;
-        }
-        
-        /* Rest of your existing styles... */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
+
         .balance-card {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            border-radius: 15px;
+            border-radius: var(--radius);
             padding: 25px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+
         .balance-title {
             font-size: 16px;
             margin-bottom: 10px;
-            opacity: 0.8;
+            opacity: 0.9;
         }
-        
+
         .balance-amount {
-            font-size: 36px;
-            font-weight: bold;
+            font-size: 42px;
+            font-weight: 800;
             margin-bottom: 5px;
+            letter-spacing: -1px;
         }
-        
+
         .balance-subtitle {
             font-size: 14px;
-            opacity: 0.8;
+            opacity: 0.9;
         }
-        
+
+        .balance-change {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+
+        .change-positive {
+            color: #4ade80;
+        }
+
+        .change-negative {
+            color: #f87171;
+        }
+
         .wallet-name {
             text-align: center;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 30px;
-            color: #555;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
+
         .action-buttons {
             display: flex;
             justify-content: space-between;
             margin-bottom: 30px;
+            gap: 15px;
         }
-        
+
         .btn {
-            background: white;
+            background: var(--card-bg);
             border: none;
-            border-radius: 10px;
-            padding: 15px 25px;
+            border-radius: 14px;
+            padding: 18px;
             font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            color: var(--text);
+            box-shadow: var(--shadow);
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 48%;
+            flex: 1;
+            transition: transform 0.2s;
         }
-        
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
         .btn-primary {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
-        
+
         .btn-icon {
-            margin-right: 8px;
-            font-size: 18px;
+            font-size: 24px;
+            margin-bottom: 8px;
         }
-        
+
+        .btn-label {
+            font-size: 14px;
+        }
+
+        .portfolio-chart {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 150px;
+            position: relative;
+        }
+
         .add-account {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6e8efb;
-            font-weight: bold;
+            color: var(--primary);
+            font-weight: 600;
             margin-bottom: 30px;
             cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
         }
-        
+
+        .add-account:hover {
+            transform: translateY(-2px);
+        }
+
         .add-account-icon {
             margin-right: 8px;
             font-size: 18px;
         }
-        
+
         .navigation {
             display: flex;
             justify-content: space-around;
-            padding: 15px 0;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            padding: 16px 0;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             margin-top: auto;
         }
-        
+
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #888;
+            color: var(--text-light);
             font-size: 12px;
             cursor: pointer;
+            transition: color 0.2s;
+            padding: 5px 15px;
+            border-radius: 12px;
         }
-        
+
         .nav-item.active {
-            color: #6e8efb;
+            color: var(--primary);
+            background: rgba(110, 142, 251, 0.1);
         }
-        
+
         .nav-icon {
             font-size: 20px;
             margin-bottom: 5px;
         }
-        
+
         /* Modal styles */
         .modal {
             display: none;
@@ -327,84 +378,353 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s ease;
         }
-        
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
+
+        .security-modal, .recovery-modal, .import-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .security-content, .recovery-content, .import-content, .modal-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
             width: 90%;
-            max-width: 400px;
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            margin-bottom: 20px;
+            max-width: 420px;
             text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.4s ease;
+            position: relative;
         }
-        
-        .input-group {
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-modal:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .security-title, .recovery-title, .import-title, .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .security-message {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            text-align: left;
+            color: var(--text-light);
+        }
+
+        .security-message strong {
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .security-divider {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .security-confirm {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        .security-continue, .recovery-done, .import-button, .modal-button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .security-continue:hover, .recovery-done:hover, .import-button:hover, .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(110, 142, 251, 0.4);
+        }
+
+        /* Recovery Phrase Styles */
+        .recovery-warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 14px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .phrase-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .phrase-item {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            padding: 14px 10px;
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        .phrase-number {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 25px;
+            color: var(--primary);
+        }
+
+        .phrase-word {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .copy-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .copy-button:hover {
+            background: rgba(110, 142, 251, 0.1);
+        }
+
+        .copy-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        /* Import Wallet Styles */
+        .import-instructions {
+            text-align: left;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-light);
+        }
+
+        .import-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            resize: none;
             margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.03);
+            color: var(--text);
         }
-        
+
+        /* Send/Receive styles */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
         .input-label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
+            font-weight: 600;
+            color: var(--text);
         }
-        
+
         .input-field {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
             font-size: 16px;
+            background: rgba(0, 0, 0, 0.03);
+            color: var(--text);
         }
-        
-        .modal-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
         }
-        
-        .btn-cancel {
-            background: #f5f5f5;
-            color: #555;
-        }
-        
+
         .qr-code {
             text-align: center;
             margin: 20px 0;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 10px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            display: inline-block;
         }
-        
+
+        .qr-code i {
+            font-size: 120px;
+            color: #333;
+        }
+
         .address-display {
-            background: #f5f5f5;
-            padding: 12px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            border-radius: 12px;
             word-break: break-all;
             font-size: 14px;
             margin-bottom: 20px;
             text-align: center;
+            color: var(--text);
+            font-family: monospace;
+        }
+
+        .token-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .token-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .token-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .token-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .token-details {
+            flex: 1;
+        }
+
+        .token-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .token-amount {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .token-value {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
     <!-- Welcome Screen -->
     <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-title">Welcome to the</div>
+        <div class="welcome-title">Welcome to the Future of Crypto</div>
         <div class="wallet-brand">Snow Wallet</div>
         <div id="welcomeOptions">
-            <button class="wallet-option" onclick="createNewWallet()">Create a New Wallet</button>
-            <button class="wallet-option" onclick="openImportModal()">Import an Existing Wallet</button>
+            <button class="wallet-option" onclick="createNewWallet()">
+                <i class="fas fa-plus-circle"></i> Create a New Wallet
+            </button>
+            <button class="wallet-option" onclick="openImportModal()">
+                <i class="fas fa-download"></i> Import Existing Wallet
+            </button>
         </div>
     </div>
     
@@ -412,23 +732,50 @@
     <div class="wallet-container" id="walletContainer">
         <div class="header">
             <h1>Total Balance</h1>
+            <div class="wallet-info">
+                <div class="wallet-avatar">S</div>
+            </div>
         </div>
         
         <div class="balance-card">
-            <div class="balance-title">Your Balance</div>
-            <div class="balance-amount">0</div>
-            <div class="balance-subtitle">$0.00</div>
+            <div class="balance-title">Your Portfolio Value</div>
+            <div class="balance-amount">$4,382.75</div>
+            <div class="balance-change">
+                <i class="fas fa-arrow-up change-positive"></i>
+                <span class="change-positive">+$124.32 (2.92%)</span>
+                <span>Today</span>
+            </div>
         </div>
         
-        <div class="wallet-name">Snowchain</div>
+        <div class="portfolio-chart">
+            <div class="chart-header">
+                <div class="chart-title">Portfolio Performance</div>
+                <div class="chart-options">
+                    <span>7D</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="portfolioChart"></canvas>
+            </div>
+        </div>
         
         <div class="action-buttons">
             <button class="btn btn-primary" onclick="openSendModal()">
-                <i class="fas fa-paper-plane btn-icon"></i> Send
+                <i class="fas fa-paper-plane btn-icon"></i>
+                <span class="btn-label">Send</span>
             </button>
             <button class="btn" onclick="openReceiveModal()">
-                <i class="fas fa-qrcode btn-icon"></i> Receive
+                <i class="fas fa-qrcode btn-icon"></i>
+                <span class="btn-label">Receive</span>
             </button>
+            <button class="btn" onclick="openSwapModal()">
+                <i class="fas fa-exchange-alt btn-icon"></i>
+                <span class="btn-label">Swap</span>
+            </button>
+        </div>
+        
+        <div class="wallet-name">
+            <i class="fas fa-wallet"></i> Snowchain Main Wallet
         </div>
         
         <div class="add-account" onclick="addAccount()">
@@ -458,26 +805,30 @@
     <!-- Security Warning Modal -->
     <div id="securityModal" class="security-modal">
         <div class="security-content">
-            <div class="security-title">Keep Your Recovery Phrase Secret</div>
+            <button class="close-modal" onclick="closeSecurityModal()">&times;</button>
+            <div class="security-title">Security First</div>
             <div class="security-message">
-                <strong>Your secret recovery phrase is like a master key to your wallet.</strong><br><br>
-                If someone gets it, they can steal your funds. There's no way to recover lost funds.<br><br>
-                Never share it with anyone—no person, website, or app.
+                <strong>Your secret recovery phrase is the key to your wallet.</strong><br><br>
+                Anyone with this phrase can access your funds. There is no way to recover it if lost.<br><br>
+                <i class="fas fa-shield-alt"></i> Never share it with anyone<br>
+                <i class="fas fa-lock"></i> Never enter it on any website<br>
+                <i class="fas fa-ban"></i> Never store it digitally
             </div>
             <div class="security-divider"></div>
             <div class="security-confirm">
                 I understand that sharing my recovery phrase could result in permanent loss of funds.
             </div>
-            <button class="security-continue" onclick="showRecoveryPhrase()">Continue</button>
+            <button class="security-continue" onclick="showRecoveryPhrase()">Continue Securely</button>
         </div>
     </div>
     
     <!-- Recovery Phrase Modal -->
     <div id="recoveryModal" class="recovery-modal">
         <div class="recovery-content">
+            <button class="close-modal" onclick="closeRecoveryModal()">&times;</button>
             <div class="recovery-title">Your Recovery Phrase</div>
             <div class="recovery-warning">
-                Do not share your Recovery Phrase! If someone has your Recovery Phrase they will have full control of your wallet.
+                <i class="fas fa-exclamation-triangle"></i> Do not share your Recovery Phrase! If someone has your phrase, they can steal all your assets.
             </div>
             
             <div class="phrase-grid" id="phraseGrid">
@@ -488,30 +839,45 @@
                 <i class="fas fa-copy copy-icon"></i> Copy to clipboard
             </div>
             
-            <button class="recovery-done" onclick="finishWalletSetup()">Done</button>
+            <button class="recovery-done" onclick="finishWalletSetup()">I've Secured My Phrase</button>
         </div>
     </div>
     
     <!-- Import Wallet Modal -->
     <div id="importModal" class="import-modal">
         <div class="import-content">
+            <button class="close-modal" onclick="closeImportModal()">&times;</button>
             <div class="import-title">Import Existing Wallet</div>
             <div class="import-instructions">
-                Enter your 12-word recovery phrase in the correct order. Separate each word with a space.
+                Enter your 12 or 24-word recovery phrase in the correct order. Separate each word with a space.
             </div>
-            <textarea class="import-textarea" id="importPhrase" placeholder="Enter your 12-word recovery phrase"></textarea>
-            <button class="import-button" onclick="importWallet()">Import Wallet</button>
-            <button class="btn btn-cancel" onclick="closeImportModal()" style="width: 100%; margin-top: 10px;">Cancel</button>
+            <textarea class="import-textarea" id="importPhrase" placeholder="e.g. abandon ability able about above absent absorb abstract absurd academy accident"></textarea>
+            <button class="import-button" onclick="importWallet()">Import Wallet Securely</button>
+            <button class="btn btn-cancel" onclick="closeImportModal()" style="width: 100%; margin-top: 10px; background: rgba(0,0,0,0.05); color: var(--text);">Cancel</button>
         </div>
     </div>
     
     <!-- Send Modal -->
     <div id="sendModal" class="modal">
         <div class="modal-content">
+            <button class="close-modal" onclick="closeSendModal()">&times;</button>
             <div class="modal-title">Send Crypto</div>
             <div class="input-group">
+                <label class="input-label">Select Token</label>
+                <div class="token-selector" onclick="openTokenSelector()">
+                    <div class="token-item">
+                        <div class="token-icon" style="background: #f0b90b;">E</div>
+                        <div class="token-details">
+                            <div class="token-name">Ethereum (ETH)</div>
+                            <div class="token-amount">Balance: 1.254 ETH</div>
+                        </div>
+                        <div class="token-value">$4,382.75</div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
                 <label class="input-label">Recipient Address</label>
-                <input type="text" class="input-field" placeholder="Enter wallet address">
+                <input type="text" class="input-field" placeholder="Enter wallet address or ENS name">
             </div>
             <div class="input-group">
                 <label class="input-label">Amount</label>
@@ -520,34 +886,38 @@
             <div class="input-group">
                 <label class="input-label">Network Fee</label>
                 <select class="input-field">
-                    <option>Low (10-30 min)</option>
-                    <option selected>Medium (3-10 min)</option>
-                    <option>High (1-3 min)</option>
+                    <option>Low (10-30 min) • $1.20</option>
+                    <option selected>Medium (3-10 min) • $2.75</option>
+                    <option>High (1-3 min) • $5.40</option>
                 </select>
             </div>
-            <div class="modal-buttons">
-                <button class="btn btn-cancel" onclick="closeSendModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="sendTransaction()">Send</button>
-            </div>
+            <button class="modal-button" onclick="sendTransaction()">Send Transaction</button>
         </div>
     </div>
     
     <!-- Receive Modal -->
     <div id="receiveModal" class="modal">
         <div class="modal-content">
+            <button class="close-modal" onclick="closeReceiveModal()">&times;</button>
             <div class="modal-title">Receive Crypto</div>
             <div class="qr-code">
-                <i class="fas fa-qrcode" style="font-size: 100px; color: #333;"></i>
+                <i class="fas fa-qrcode"></i>
             </div>
             <div class="address-display">
                 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
             </div>
-            <div class="modal-buttons">
-                <button class="btn btn-cancel" onclick="closeReceiveModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="copyAddress()">
-                    <i class="fas fa-copy"></i> Copy Address
-                </button>
+            <div class="input-group">
+                <label class="input-label">Select Token</label>
+                <select class="input-field">
+                    <option>Ethereum (ETH)</option>
+                    <option>Bitcoin (BTC)</option>
+                    <option>USD Coin (USDC)</option>
+                    <option>Snow Token (SNOW)</option>
+                </select>
             </div>
+            <button class="modal-button" onclick="copyAddress()">
+                <i class="fas fa-copy"></i> Copy Address
+            </button>
         </div>
     </div>
     
@@ -579,6 +949,63 @@
         
         // Global variable to store generated phrases
         let currentRecoveryPhrase = [];
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Initialize portfolio chart
+        function initPortfolioChart() {
+            const ctx = document.getElementById('portfolioChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: [4200, 4250, 4300, 4320, 4350, 4370, 4382],
+                        borderColor: '#6e8efb',
+                        backgroundColor: 'rgba(110, 142, 251, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
         
         // Wallet initialization functions
         function createNewWallet() {
@@ -647,20 +1074,15 @@
             });
             
             navigator.clipboard.writeText(phrase);
-            alert('Recovery phrase copied to clipboard!');
+            alert('Recovery phrase copied to clipboard! Please store it securely.');
         }
         
         function finishWalletSetup() {
             closeRecoveryModal();
             
-            // Reset the welcome screen to show only Import button
-            document.getElementById('welcomeOptions').innerHTML = `
-                <button class="wallet-option" onclick="openImportModal()">Import an Existing Wallet</button>
-            `;
-            
-            // Show welcome screen again
-            document.getElementById('welcomeScreen').style.display = 'flex';
-            document.getElementById('walletContainer').style.display = 'none';
+            // Show wallet interface
+            document.getElementById('walletContainer').style.display = 'flex';
+            initPortfolioChart();
             
             // Clear the recovery phrase
             currentRecoveryPhrase = [];
@@ -702,6 +1124,7 @@
             closeImportModal();
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('walletContainer').style.display = 'flex';
+            initPortfolioChart();
             
             // Generate a random address for demo
             const randomAddress = '0x' + Array.from({length: 40}, () => 
@@ -729,12 +1152,6 @@
             document.querySelector('.nav-item:nth-child(3)').classList.add('active');
         }
         
-        function showSecurityWarning() {
-            document.getElementById('securityModal').style.display = 'flex';
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            document.querySelector('.nav-item:nth-child(4)').classList.add('active');
-        }
-        
         // Modal functions
         function openSendModal() {
             document.getElementById('sendModal').style.display = 'flex';
@@ -750,6 +1167,10 @@
         
         function closeReceiveModal() {
             document.getElementById('receiveModal').style.display = 'none';
+        }
+        
+        function openSwapModal() {
+            alert('Token swap functionality would go here');
         }
         
         // Transaction functions
@@ -775,6 +1196,15 @@
         function addAccount() {
             alert('Add account functionality would go here');
         }
+        
+        // Initialize theme icon
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.theme-toggle i').classList.remove('fa-moon');
+                document.querySelector('.theme-toggle i').classList.add('fa-sun');
+            }
+        });
     </script>
 </body>
 </html>
