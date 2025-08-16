@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Wallet</title>
+    <title>Snow Wallet</title>
     <style>
         * {
             margin: 0;
@@ -17,10 +17,174 @@
             color: #333;
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
             height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Welcome Screen */
+        .welcome-screen {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.5s ease;
+        }
+        
+        .welcome-screen.hidden {
+            transform: translateY(-100%);
+        }
+        
+        .welcome-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+        
+        .wallet-name {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 60px;
+        }
+        
+        .welcome-options {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .welcome-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            border-radius: 25px;
+            padding: 15px;
+            font-size: 18px;
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .welcome-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Auth Modal */
+        .auth-modal {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            height: 100%;
+            padding: 30px 20px;
+            transition: transform 0.5s ease;
+            overflow-y: auto;
+        }
+        
+        .auth-modal.visible {
+            transform: translateY(-100%);
+        }
+        
+        .auth-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .auth-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            border-bottom: 3px solid transparent;
+            color: #888;
+        }
+        
+        .auth-tab.active {
+            border-bottom: 3px solid #6e8efb;
+            font-weight: bold;
+            color: #6e8efb;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            background: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #555;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 100%;
+            padding: 20px;
+            transition: transform 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .dashboard.visible {
+            transform: translateY(-100%);
         }
         
         .header {
@@ -66,27 +230,6 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 30px;
-        }
-        
-        .btn {
-            background: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
         }
         
         .btn-icon {
@@ -136,110 +279,55 @@
             margin-bottom: 5px;
         }
         
-        /* Auth modal styles */
-        .auth-modal {
-            display: flex;
-            position: fixed;
-            top: 0;
+        /* Mnemonic Modal */
+        .mnemonic-modal {
+            position: absolute;
+            top: 100%;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .auth-content {
+            height: 100%;
             background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
+            padding: 30px 20px;
+            transition: transform 0.5s ease;
+            z-index: 10;
         }
         
-        .auth-title {
-            font-size: 20px;
-            margin-bottom: 20px;
-            text-align: center;
+        .mnemonic-modal.visible {
+            transform: translateY(-100%);
         }
         
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .auth-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .auth-tab.active {
-            border-bottom: 3px solid #6e8efb;
-            font-weight: bold;
-            color: #6e8efb;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
+        .mnemonic-phrase {
+            background: #f9f9f9;
+            padding: 15px;
             border-radius: 10px;
+            margin: 20px 0;
             font-size: 16px;
+            line-height: 1.6;
+            text-align: center;
         }
         
-        .auth-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
+        .warning {
+            color: #e74c3c;
+            font-size: 14px;
+            margin: 15px 0;
+            text-align: center;
         }
         
-        .btn-cancel {
-            background: #f5f5f5;
-            color: #555;
-        }
-        
-        /* Transaction modal styles */
+        /* Transaction Modals */
         .tx-modal {
-            display: none;
-            position: fixed;
-            top: 0;
+            position: absolute;
+            top: 100%;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .tx-content {
+            height: 100%;
             background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
+            padding: 30px 20px;
+            transition: transform 0.5s ease;
+            z-index: 10;
         }
         
-        .tx-title {
-            font-size: 20px;
-            margin-bottom: 20px;
-            text-align: center;
+        .tx-modal.visible {
+            transform: translateY(-100%);
         }
         
         .qr-code {
@@ -259,99 +347,78 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        
-        /* Dashboard (shown after login) */
-        .dashboard {
-            display: none;
-        }
-        
-        /* Mnemonic phrase display */
-        .mnemonic-phrase {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-size: 14px;
-            line-height: 1.6;
-            text-align: center;
-        }
-        
-        .warning {
-            color: #e74c3c;
-            font-size: 12px;
-            margin: 10px 0;
-            text-align: center;
-        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Authentication Modal (shown by default) -->
-    <div id="authModal" class="auth-modal">
-        <div class="auth-content">
-            <div class="auth-title">Crypto Wallet</div>
-            
-            <div class="auth-tabs">
-                <div class="auth-tab active" onclick="switchTab('login')">Login</div>
-                <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
-            </div>
-            
-            <div id="loginForm">
-                <div class="input-group">
-                    <label class="input-label">Email</label>
-                    <input type="email" id="loginEmail" class="input-field" placeholder="your@email.com">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Password</label>
-                    <input type="password" id="loginPassword" class="input-field" placeholder="••••••••">
-                </div>
-                <div class="auth-buttons">
-                    <button class="btn btn-cancel" onclick="closeAuthModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="login()">Login</button>
-                </div>
-            </div>
-            
-            <div id="signupForm" style="display: none;">
-                <div class="input-group">
-                    <label class="input-label">Email</label>
-                    <input type="email" id="signupEmail" class="input-field" placeholder="your@email.com">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Password</label>
-                    <input type="password" id="signupPassword" class="input-field" placeholder="••••••••">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Confirm Password</label>
-                    <input type="password" id="signupConfirmPassword" class="input-field" placeholder="••••••••">
-                </div>
-                <div class="auth-buttons">
-                    <button class="btn btn-cancel" onclick="closeAuthModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="signup()">Create Wallet</button>
-                </div>
-            </div>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-title">Welcome to the</div>
+        <div class="wallet-name">Snow Wallet</div>
+        <div class="welcome-options">
+            <button class="welcome-btn" onclick="showAuthModal('signup')">Create a New Wallet</button>
+            <button class="welcome-btn" onclick="showAuthModal('login')">Import an Existing Wallet</button>
         </div>
     </div>
     
-    <!-- Mnemonic Phrase Modal (shown after signup) -->
-    <div id="mnemonicModal" class="auth-modal" style="display: none;">
-        <div class="auth-content">
-            <div class="auth-title">Your Recovery Phrase</div>
-            <div class="warning">
-                <i class="fas fa-exclamation-triangle"></i> Write this down and store it securely!
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-title">Snow Wallet</div>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+            <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+        </div>
+        
+        <div id="loginForm">
+            <div class="input-group">
+                <label class="input-label">Recovery Phrase</label>
+                <textarea class="input-field" id="loginPhrase" placeholder="Enter your 12-word recovery phrase" rows="3"></textarea>
             </div>
-            <div class="mnemonic-phrase" id="mnemonicPhrase">
-                <!-- Generated mnemonic will appear here -->
-            </div>
-            <div class="warning">
-                This is the only way to recover your wallet if you lose access.
+            <div class="input-group">
+                <label class="input-label">Password</label>
+                <input type="password" id="loginPassword" class="input-field" placeholder="••••••••">
             </div>
             <div class="auth-buttons">
-                <button class="btn btn-primary" onclick="confirmMnemonic()">I've Saved It</button>
+                <button class="btn btn-cancel" onclick="hideAuthModal()">Back</button>
+                <button class="btn btn-primary" onclick="login()">Unlock Wallet</button>
+            </div>
+        </div>
+        
+        <div id="signupForm" style="display: none;">
+            <div class="input-group">
+                <label class="input-label">Password</label>
+                <input type="password" id="signupPassword" class="input-field" placeholder="••••••••">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Confirm Password</label>
+                <input type="password" id="signupConfirmPassword" class="input-field" placeholder="••••••••">
+            </div>
+            <div class="auth-buttons">
+                <button class="btn btn-cancel" onclick="hideAuthModal()">Back</button>
+                <button class="btn btn-primary" onclick="signup()">Create Wallet</button>
             </div>
         </div>
     </div>
     
-    <!-- Dashboard (shown after login) -->
+    <!-- Mnemonic Modal -->
+    <div id="mnemonicModal" class="mnemonic-modal">
+        <div class="auth-title">Your Recovery Phrase</div>
+        <div class="warning">
+            <i class="fas fa-exclamation-triangle"></i> Write this down and store it securely!
+        </div>
+        <div class="mnemonic-phrase" id="mnemonicPhrase">
+            <!-- Generated mnemonic will appear here -->
+        </div>
+        <div class="warning">
+            This is the only way to recover your wallet if you lose access. Never share it with anyone.
+        </div>
+        <div class="auth-buttons">
+            <button class="btn btn-primary" onclick="confirmMnemonic()">I've Saved It</button>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
     <div id="dashboard" class="dashboard">
         <div class="header">
             <h1>Total Balance</h1>
@@ -363,13 +430,13 @@
             <div class="balance-subtitle" id="balanceValue">$0.00</div>
         </div>
         
-        <div class="wallet-name" id="walletName">Snowchain</div>
+        <div class="wallet-name">Snow Wallet</div>
         
         <div class="action-buttons">
-            <button class="btn btn-primary" onclick="openSendModal()">
+            <button class="btn btn-primary" onclick="showSendModal()">
                 <i class="fas fa-paper-plane btn-icon"></i> Send
             </button>
-            <button class="btn" onclick="openReceiveModal()">
+            <button class="btn" onclick="showReceiveModal()">
                 <i class="fas fa-qrcode btn-icon"></i> Receive
             </button>
         </div>
@@ -400,47 +467,43 @@
     
     <!-- Send Modal -->
     <div id="sendModal" class="tx-modal">
-        <div class="tx-content">
-            <div class="tx-title">Send Crypto</div>
-            <div class="input-group">
-                <label class="input-label">Recipient Address</label>
-                <input type="text" class="input-field" placeholder="Enter wallet address">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Amount</label>
-                <input type="number" class="input-field" placeholder="0.00">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Network Fee</label>
-                <select class="input-field">
-                    <option>Low (10-30 min)</option>
-                    <option selected>Medium (3-10 min)</option>
-                    <option>High (1-3 min)</option>
-                </select>
-            </div>
-            <div class="auth-buttons">
-                <button class="btn btn-cancel" onclick="closeSendModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="sendTransaction()">Send</button>
-            </div>
+        <div class="auth-title">Send Crypto</div>
+        <div class="input-group">
+            <label class="input-label">Recipient Address</label>
+            <input type="text" class="input-field" placeholder="Enter wallet address">
+        </div>
+        <div class="input-group">
+            <label class="input-label">Amount</label>
+            <input type="number" class="input-field" placeholder="0.00">
+        </div>
+        <div class="input-group">
+            <label class="input-label">Network Fee</label>
+            <select class="input-field">
+                <option>Low (10-30 min)</option>
+                <option selected>Medium (3-10 min)</option>
+                <option>High (1-3 min)</option>
+            </select>
+        </div>
+        <div class="auth-buttons">
+            <button class="btn btn-cancel" onclick="hideSendModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="sendTransaction()">Send</button>
         </div>
     </div>
     
     <!-- Receive Modal -->
     <div id="receiveModal" class="tx-modal">
-        <div class="tx-content">
-            <div class="tx-title">Receive Crypto</div>
-            <div class="qr-code">
-                <canvas id="qrCanvas" width="200" height="200"></canvas>
-            </div>
-            <div class="address-display" id="walletAddress">
-                <!-- Wallet address will appear here -->
-            </div>
-            <div class="auth-buttons">
-                <button class="btn btn-cancel" onclick="closeReceiveModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="copyAddress()">
-                    <i class="fas fa-copy"></i> Copy Address
-                </button>
-            </div>
+        <div class="auth-title">Receive Crypto</div>
+        <div class="qr-code">
+            <canvas id="qrCanvas" width="200" height="200"></canvas>
+        </div>
+        <div class="address-display" id="walletAddress">
+            <!-- Wallet address will appear here -->
+        </div>
+        <div class="auth-buttons">
+            <button class="btn btn-cancel" onclick="hideReceiveModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="copyAddress()">
+                <i class="fas fa-copy"></i> Copy Address
+            </button>
         </div>
     </div>
     
@@ -449,18 +512,20 @@
         let currentUser = null;
         let walletAddress = '';
         
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is already logged in (in a real app, this would check localStorage or cookies)
-            const loggedInUser = localStorage.getItem('cryptoWalletUser');
-            if (loggedInUser) {
-                currentUser = JSON.parse(loggedInUser);
-                walletAddress = currentUser.walletAddress;
-                showDashboard();
-            }
-        });
+        // Show auth modal
+        function showAuthModal(tab) {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('authModal').classList.add('visible');
+            switchTab(tab);
+        }
         
-        // Auth functions
+        // Hide auth modal
+        function hideAuthModal() {
+            document.getElementById('authModal').classList.remove('visible');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+        
+        // Switch between login/signup tabs
         function switchTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`.auth-tab[onclick="switchTab('${tab}')"]`).classList.add('active');
@@ -469,42 +534,36 @@
             document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
         }
         
-        function closeAuthModal() {
-            // In a real app, we might not want to close if user is not logged in
-            if (!currentUser) return;
-            document.getElementById('authModal').style.display = 'none';
-        }
-        
+        // Login function
         function login() {
-            const email = document.getElementById('loginEmail').value;
+            const phrase = document.getElementById('loginPhrase').value;
             const password = document.getElementById('loginPassword').value;
             
-            if (!email || !password) {
+            if (!phrase || !password) {
                 alert('Please fill in all fields');
                 return;
             }
             
-            // In a real app, this would verify credentials with a server
-            const users = JSON.parse(localStorage.getItem('cryptoWalletUsers') || '[]');
-            const user = users.find(u => u.email === email && u.password === password);
+            // In a real app, this would verify with a server
+            const users = JSON.parse(localStorage.getItem('snowWalletUsers') || '[]');
+            const user = users.find(u => u.mnemonic === phrase && u.password === password);
             
             if (user) {
                 currentUser = user;
                 walletAddress = user.walletAddress;
-                localStorage.setItem('cryptoWalletUser', JSON.stringify(user));
+                localStorage.setItem('snowWalletUser', JSON.stringify(user));
                 showDashboard();
-                document.getElementById('authModal').style.display = 'none';
             } else {
-                alert('Invalid credentials');
+                alert('Invalid recovery phrase or password');
             }
         }
         
+        // Signup function
         function signup() {
-            const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('signupConfirmPassword').value;
             
-            if (!email || !password || !confirmPassword) {
+            if (!password || !confirmPassword) {
                 alert('Please fill in all fields');
                 return;
             }
@@ -519,57 +578,50 @@
                 return;
             }
             
-            // Check if email already exists
-            const users = JSON.parse(localStorage.getItem('cryptoWalletUsers') || '[]');
-            if (users.some(u => u.email === email)) {
-                alert('Email already registered');
-                return;
-            }
-            
-            // Generate wallet (in a real app, this would use a proper crypto library)
+            // Generate wallet
             const mnemonic = generateMnemonic();
             const address = generateAddressFromMnemonic(mnemonic);
             
-            // Create user object
+            // Create user
             const user = {
-                email,
-                password, // In a real app, we would hash this
+                mnemonic,
+                password, // In real app, hash this
                 walletAddress: address,
                 balance: 0,
                 transactions: []
             };
             
-            // Show mnemonic phrase to user
+            // Show mnemonic
             document.getElementById('mnemonicPhrase').textContent = mnemonic;
-            document.getElementById('authModal').style.display = 'none';
-            document.getElementById('mnemonicModal').style.display = 'flex';
+            document.getElementById('authModal').classList.remove('visible');
+            document.getElementById('mnemonicModal').classList.add('visible');
             
-            // Store user data (after they confirm saving mnemonic)
             currentUser = user;
             walletAddress = address;
         }
         
+        // Confirm mnemonic
         function confirmMnemonic() {
-            // Save the new user
-            const users = JSON.parse(localStorage.getItem('cryptoWalletUsers') || '[]');
+            // Save user
+            const users = JSON.parse(localStorage.getItem('snowWalletUsers') || '[]');
             users.push(currentUser);
-            localStorage.setItem('cryptoWalletUsers', JSON.stringify(users));
-            localStorage.setItem('cryptoWalletUser', JSON.stringify(currentUser));
+            localStorage.setItem('snowWalletUsers', JSON.stringify(users));
+            localStorage.setItem('snowWalletUser', JSON.stringify(currentUser));
             
             // Show dashboard
-            document.getElementById('mnemonicModal').style.display = 'none';
+            document.getElementById('mnemonicModal').classList.remove('visible');
             showDashboard();
         }
         
+        // Show dashboard
         function showDashboard() {
-            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('dashboard').classList.add('visible');
             document.getElementById('walletAddress').textContent = walletAddress;
             generateQRCode();
         }
         
-        // Wallet functions
+        // Generate mnemonic phrase
         function generateMnemonic() {
-            // In a real app, use a proper BIP39 library
             const words = [
                 'abstract', 'account', 'address', 'amount', 'balance',
                 'bank', 'bitcoin', 'block', 'buy', 'crypto',
@@ -588,23 +640,24 @@
             return mnemonic;
         }
         
+        // Generate wallet address
         function generateAddressFromMnemonic(mnemonic) {
-            // In a real app, this would use a proper crypto library to derive keys
-            // This is just a simulation that creates a fake ETH-like address
             const hash = hashCode(mnemonic);
             return '0x' + hash.toString(16).padStart(40, '0').slice(0, 40);
         }
         
+        // Simple hash function
         function hashCode(str) {
             let hash = 0;
             for (let i = 0; i < str.length; i++) {
                 const char = str.charCodeAt(i);
                 hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32bit integer
+                hash = hash & hash;
             }
             return Math.abs(hash);
         }
         
+        // Generate QR code
         function generateQRCode() {
             const canvas = document.getElementById('qrCanvas');
             const ctx = canvas.getContext('2d');
@@ -618,7 +671,6 @@
             const size = 10;
             const offset = (canvas.width - size * 20) / 2;
             
-            // This would be replaced with a real QR code library in production
             for (let i = 0; i < 20; i++) {
                 for (let j = 0; j < 20; j++) {
                     if (Math.random() > 0.6 || (i < 8 && j < 8) || (i > 12 && j < 8) || (i < 8 && j > 12)) {
@@ -629,20 +681,20 @@
         }
         
         // Transaction functions
-        function openSendModal() {
-            document.getElementById('sendModal').style.display = 'flex';
+        function showSendModal() {
+            document.getElementById('sendModal').classList.add('visible');
         }
         
-        function closeSendModal() {
-            document.getElementById('sendModal').style.display = 'none';
+        function hideSendModal() {
+            document.getElementById('sendModal').classList.remove('visible');
         }
         
-        function openReceiveModal() {
-            document.getElementById('receiveModal').style.display = 'flex';
+        function showReceiveModal() {
+            document.getElementById('receiveModal').classList.add('visible');
         }
         
-        function closeReceiveModal() {
-            document.getElementById('receiveModal').style.display = 'none';
+        function hideReceiveModal() {
+            document.getElementById('receiveModal').classList.remove('visible');
         }
         
         function sendTransaction() {
@@ -659,14 +711,13 @@
                 return;
             }
             
-            // In a real app, this would send the transaction to the blockchain
             alert(`Sending ${amount} crypto to ${address}`);
             
-            // Update balance (temporarily)
+            // Update balance
             currentUser.balance -= amount;
             document.getElementById('balanceAmount').textContent = currentUser.balance.toFixed(4);
             
-            closeSendModal();
+            hideSendModal();
         }
         
         function copyAddress() {
@@ -684,6 +735,17 @@
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 this.classList.add('active');
             });
+        });
+        
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = localStorage.getItem('snowWalletUser');
+            if (loggedInUser) {
+                currentUser = JSON.parse(loggedInUser);
+                walletAddress = currentUser.walletAddress;
+                document.getElementById('welcomeScreen').classList.add('hidden');
+                showDashboard();
+            }
         });
     </script>
 </body>
