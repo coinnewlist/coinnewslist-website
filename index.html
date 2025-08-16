@@ -69,7 +69,7 @@
         }
         
         /* Security Warning Modal */
-        .security-modal {
+        .security-modal, .recovery-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -82,7 +82,7 @@
             align-items: center;
         }
         
-        .security-content {
+        .security-content, .recovery-content {
             background: white;
             padding: 25px;
             border-radius: 15px;
@@ -91,7 +91,7 @@
             text-align: center;
         }
         
-        .security-title {
+        .security-title, .recovery-title {
             font-size: 22px;
             font-weight: bold;
             margin-bottom: 20px;
@@ -118,7 +118,7 @@
             margin-bottom: 20px;
         }
         
-        .security-continue {
+        .security-continue, .recovery-done {
             background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
             border: none;
@@ -128,6 +128,61 @@
             font-weight: bold;
             width: 100%;
             cursor: pointer;
+        }
+        
+        /* Recovery Phrase Styles */
+        .recovery-warning {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .phrase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .phrase-item {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+        
+        .phrase-number {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 25px;
+            color: #777;
+        }
+        
+        .phrase-word {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .copy-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6e8efb;
+            font-weight: bold;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .copy-icon {
+            margin-right: 8px;
+            font-size: 18px;
         }
         
         /* Rest of your existing styles... */
@@ -392,7 +447,27 @@
             <div class="security-confirm">
                 I understand that sharing my recovery phrase could result in permanent loss of funds.
             </div>
-            <button class="security-continue" onclick="closeSecurityModal()">Continue</button>
+            <button class="security-continue" onclick="showRecoveryPhrase()">Continue</button>
+        </div>
+    </div>
+    
+    <!-- Recovery Phrase Modal -->
+    <div id="recoveryModal" class="recovery-modal">
+        <div class="recovery-content">
+            <div class="recovery-title">Your Recovery Phrase</div>
+            <div class="recovery-warning">
+                Do not share your Recovery Phrase! If someone has your Recovery Phrase they will have full control of your wallet.
+            </div>
+            
+            <div class="phrase-grid" id="phraseGrid">
+                <!-- Phrase items will be generated here -->
+            </div>
+            
+            <div class="copy-button" onclick="copyRecoveryPhrase()">
+                <i class="fas fa-copy copy-icon"></i> Copy to clipboard
+            </div>
+            
+            <button class="recovery-done" onclick="closeRecoveryModal()">Done</button>
         </div>
     </div>
     
@@ -443,10 +518,35 @@
     </div>
     
     <script>
+        // Sample word list for recovery phrase (BIP39)
+        const bip39Wordlist = [
+            'abandon', 'ability', 'able', 'about', 'above', 'absent', 'absorb', 'abstract', 'absurd', 'academy',
+            'accident', 'account', 'accuse', 'achieve', 'acid', 'acoustic', 'acquire', 'across', 'act', 'action',
+            'actor', 'actress', 'actual', 'adapt', 'add', 'addict', 'address', 'adjust', 'admit', 'adult',
+            'advance', 'advice', 'aerobic', 'affair', 'afford', 'afraid', 'again', 'age', 'agent', 'agree',
+            'ahead', 'aim', 'air', 'airport', 'aisle', 'alarm', 'album', 'alcohol', 'alert', 'alien',
+            'all', 'alley', 'allow', 'almost', 'alone', 'alpha', 'already', 'also', 'alter', 'always',
+            'amateur', 'amazing', 'among', 'amount', 'amused', 'analyst', 'anchor', 'ancient', 'anger', 'angle',
+            'angry', 'animal', 'ankle', 'announce', 'annual', 'another', 'answer', 'antenna', 'antique', 'anxiety',
+            'any', 'apart', 'apology', 'appear', 'apple', 'approve', 'april', 'arch', 'arctic', 'area',
+            'arena', 'argue', 'arm', 'armed', 'armor', 'army', 'around', 'arrange', 'arrest', 'arrive',
+            'arrow', 'art', 'artefact', 'artist', 'artwork', 'ask', 'aspect', 'assault', 'asset', 'assist',
+            'assume', 'asthma', 'athlete', 'atom', 'attack', 'attend', 'attitude', 'attract', 'auction', 'audit',
+            'august', 'aunt', 'author', 'auto', 'autumn', 'average', 'avocado', 'avoid', 'awake', 'aware',
+            'away', 'awesome', 'awful', 'awkward', 'axis', 'baby', 'bachelor', 'bacon', 'badge', 'bag',
+            'balance', 'balcony', 'ball', 'bamboo', 'banana', 'banner', 'bar', 'barely', 'bargain', 'barrel',
+            'base', 'basic', 'basket', 'battle', 'beach', 'bean', 'beauty', 'because', 'become', 'beef',
+            'before', 'begin', 'behave', 'behind', 'believe', 'below', 'belt', 'bench', 'benefit', 'best',
+            'betray', 'better', 'between', 'beyond', 'bicycle', 'bid', 'bike', 'bind', 'biology', 'bird',
+            'birth', 'bitter', 'black', 'blade', 'blame', 'blanket', 'blast', 'bleak', 'bless', 'blind',
+            'blood', 'blossom', 'blouse', 'blue', 'blur', 'blush', 'board', 'boat', 'body', 'boil',
+            'bomb', 'bone', 'bonus', 'book', 'boost', 'border', 'boring', 'borrow', 'boss', 'bottom'
+        ];
+        
         // Wallet initialization functions
         function createNewWallet() {
-            // In a real app, this would generate a new wallet with private key
-            alert('New wallet created! Generating keys...');
+            // Generate a new recovery phrase
+            generateRecoveryPhrase();
             
             // For demo purposes, we'll just show the wallet interface
             document.getElementById('welcomeScreen').style.display = 'none';
@@ -473,6 +573,32 @@
             }
         }
         
+        // Generate a random recovery phrase
+        function generateRecoveryPhrase() {
+            const phrase = [];
+            for (let i = 0; i < 12; i++) {
+                const randomIndex = Math.floor(Math.random() * bip39Wordlist.length);
+                phrase.push(bip39Wordlist[randomIndex]);
+            }
+            return phrase;
+        }
+        
+        // Display the recovery phrase in the grid
+        function displayRecoveryPhrase(phrase) {
+            const grid = document.getElementById('phraseGrid');
+            grid.innerHTML = '';
+            
+            phrase.forEach((word, index) => {
+                const item = document.createElement('div');
+                item.className = 'phrase-item';
+                item.innerHTML = `
+                    <div class="phrase-number">${index + 1}</div>
+                    <div class="phrase-word">${word}</div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+        
         // Security Warning Modal
         function showSecurityWarning() {
             document.getElementById('securityModal').style.display = 'flex';
@@ -483,8 +609,34 @@
         
         function closeSecurityModal() {
             document.getElementById('securityModal').style.display = 'none';
+        }
+        
+        // Recovery Phrase Modal
+        function showRecoveryPhrase() {
+            closeSecurityModal();
+            // Generate and display a new recovery phrase
+            const phrase = generateRecoveryPhrase();
+            displayRecoveryPhrase(phrase);
+            document.getElementById('recoveryModal').style.display = 'flex';
+        }
+        
+        function closeRecoveryModal() {
+            document.getElementById('recoveryModal').style.display = 'none';
             // Here you would typically navigate to actual settings page
             alert('Now showing actual settings page...');
+        }
+        
+        function copyRecoveryPhrase() {
+            const phraseItems = document.querySelectorAll('.phrase-word');
+            let phrase = '';
+            
+            phraseItems.forEach((item, index) => {
+                phrase += item.textContent;
+                if (index < phraseItems.length - 1) phrase += ' ';
+            });
+            
+            navigator.clipboard.writeText(phrase);
+            alert('Recovery phrase copied to clipboard!');
         }
         
         // Navigation functions
