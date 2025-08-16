@@ -61,7 +61,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
-        /* Main Wallet Styles (hidden by default) */
+        /* Main Wallet Styles */
         .wallet-container {
             display: none;
             flex-direction: column;
@@ -408,7 +408,7 @@
         </div>
     </div>
     
-    <!-- Main Wallet Interface (hidden initially) -->
+    <!-- Main Wallet Interface -->
     <div class="wallet-container" id="walletContainer">
         <div class="header">
             <h1>Total Balance</h1>
@@ -539,8 +539,8 @@
             <div class="qr-code">
                 <i class="fas fa-qrcode" style="font-size: 100px; color: #333;"></i>
             </div>
-            <div class="address-display">
-                0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+            <div class="address-display" id="walletAddress">
+                <!-- Wallet address will be shown here -->
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-cancel" onclick="closeReceiveModal()">Cancel</button>
@@ -577,16 +577,70 @@
             'bomb', 'bone', 'bonus', 'book', 'boost', 'border', 'boring', 'borrow', 'boss', 'bottom'
         ];
         
-        // Global variable to store generated phrases
-        let currentRecoveryPhrase = [];
+        // Initialize the wallet on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if a wallet is already stored
+            const storedWallet = localStorage.getItem('cryptoWallet');
+            
+            if (storedWallet) {
+                // Wallet exists - show main interface
+                const wallet = JSON.parse(storedWallet);
+                showWalletInterface(wallet);
+            } else {
+                // No wallet - show welcome screen
+                document.getElementById('welcomeScreen').style.display = 'flex';
+            }
+        });
         
-        // Wallet initialization functions
+        // Generate a deterministic address from recovery phrase
+        function generateAddressFromPhrase(phrase) {
+            // In a real wallet, we would use cryptographic functions to derive the address
+            // For this demo, we'll create a consistent hash-based address
+            
+            // Simple hash function
+            function simpleHash(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = (hash << 5) - hash + char;
+                    hash = hash & hash; // Convert to 32bit integer
+                }
+                return Math.abs(hash).toString(16);
+            }
+            
+            // Create hash from phrase
+            const phraseHash = simpleHash(phrase.join(''));
+            
+            // Pad with zeros to get 40 characters (like Ethereum addresses)
+            const paddedHash = phraseHash.padEnd(40, '0').substring(0, 40);
+            
+            return '0x' + paddedHash;
+        }
+        
+        // Show wallet interface with wallet data
+        function showWalletInterface(wallet) {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('walletContainer').style.display = 'flex';
+            document.getElementById('walletAddress').textContent = wallet.address;
+        }
+        
+        // Create new wallet
         function createNewWallet() {
             // Generate a new recovery phrase
-            currentRecoveryPhrase = generateRecoveryPhrase();
+            const phrase = generateRecoveryPhrase();
             
-            // Hide welcome screen
-            document.getElementById('welcomeScreen').style.display = 'none';
+            // Generate address from phrase
+            const address = generateAddressFromPhrase(phrase);
+            
+            // Create wallet object
+            const wallet = {
+                phrase: phrase,
+                address: address,
+                balance: 0
+            };
+            
+            // Store wallet for this session
+            currentWallet = wallet;
             
             // Show security modal
             showSecurityWarning();
@@ -629,7 +683,7 @@
         // Recovery Phrase Modal
         function showRecoveryPhrase() {
             closeSecurityModal();
-            displayRecoveryPhrase(currentRecoveryPhrase);
+            displayRecoveryPhrase(currentWallet.phrase);
             document.getElementById('recoveryModal').style.display = 'flex';
         }
         
@@ -638,32 +692,19 @@
         }
         
         function copyRecoveryPhrase() {
-            const phraseItems = document.querySelectorAll('.phrase-word');
-            let phrase = '';
-            
-            phraseItems.forEach((item, index) => {
-                phrase += item.textContent;
-                if (index < phraseItems.length - 1) phrase += ' ';
-            });
-            
-            navigator.clipboard.writeText(phrase);
+            navigator.clipboard.writeText(currentWallet.phrase.join(' '));
             alert('Recovery phrase copied to clipboard!');
         }
         
         function finishWalletSetup() {
+            // Save wallet to localStorage
+            localStorage.setItem('cryptoWallet', JSON.stringify(currentWallet));
+            
+            // Show wallet interface
+            showWalletInterface(currentWallet);
+            
+            // Reset modal
             closeRecoveryModal();
-            
-            // Reset the welcome screen to show only Import button
-            document.getElementById('welcomeOptions').innerHTML = `
-                <button class="wallet-option" onclick="openImportModal()">Import an Existing Wallet</button>
-            `;
-            
-            // Show welcome screen again
-            document.getElementById('welcomeScreen').style.display = 'flex';
-            document.getElementById('walletContainer').style.display = 'none';
-            
-            // Clear the recovery phrase
-            currentRecoveryPhrase = [];
         }
         
         // Import Wallet Functions
@@ -698,17 +739,24 @@
                 return;
             }
             
-            // Success - show wallet interface
+            // Generate address from phrase
+            const address = generateAddressFromPhrase(phraseWords);
+            
+            // Create wallet object
+            const wallet = {
+                phrase: phraseWords,
+                address: address,
+                balance: 0
+            };
+            
+            // Save wallet to localStorage
+            localStorage.setItem('cryptoWallet', JSON.stringify(wallet));
+            
+            // Show wallet interface
+            showWalletInterface(wallet);
+            
+            // Close modal
             closeImportModal();
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('walletContainer').style.display = 'flex';
-            
-            // Generate a random address for demo
-            const randomAddress = '0x' + Array.from({length: 40}, () => 
-                '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
-            document.querySelector('.address-display').textContent = randomAddress;
-            
-            alert('Wallet imported successfully!');
         }
         
         // Navigation functions
@@ -767,9 +815,11 @@
         }
         
         function copyAddress() {
-            const address = document.querySelector('.address-display').textContent;
-            navigator.clipboard.writeText(address.trim());
-            alert('Address copied to clipboard!');
+            const wallet = JSON.parse(localStorage.getItem('cryptoWallet'));
+            if (wallet && wallet.address) {
+                navigator.clipboard.writeText(wallet.address);
+                alert('Address copied to clipboard!');
+            }
         }
         
         function addAccount() {
