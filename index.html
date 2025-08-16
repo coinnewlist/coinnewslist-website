@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snow Wallet - Professional Crypto Wallet</title>
+    <title>Snow Wallet - Consistent Address</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -672,6 +672,17 @@
             font-weight: 600;
         }
 
+        /* Address consistency banner */
+        .consistency-banner {
+            background: rgba(110, 142, 251, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 0 0 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -718,6 +729,9 @@
     <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-title">Welcome to the Future of Crypto</div>
         <div class="wallet-brand">Snow Wallet</div>
+        <div class="consistency-banner">
+            <i class="fas fa-lock"></i> Your wallet address remains consistent after creation
+        </div>
         <div id="welcomeOptions">
             <button class="wallet-option" onclick="createNewWallet()">
                 <i class="fas fa-plus-circle"></i> Create a New Wallet
@@ -903,8 +917,11 @@
             <div class="qr-code">
                 <i class="fas fa-qrcode"></i>
             </div>
-            <div class="address-display">
-                0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+            <div class="address-display" id="walletAddress">
+                <!-- Address will be shown here -->
+            </div>
+            <div class="consistency-banner">
+                <i class="fas fa-check-circle"></i> This address remains consistent for your wallet
             </div>
             <div class="input-group">
                 <label class="input-label">Select Token</label>
@@ -947,8 +964,9 @@
             'bomb', 'bone', 'bonus', 'book', 'boost', 'border', 'boring', 'borrow', 'boss', 'bottom'
         ];
         
-        // Global variable to store generated phrases
+        // Global variables
         let currentRecoveryPhrase = [];
+        let walletAddress = ''; // Will store the consistent wallet address
         
         // Theme toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -1007,10 +1025,30 @@
             });
         }
         
+        // Generate a consistent address from recovery phrase
+        function generateAddressFromPhrase(phraseArray) {
+            // Create a simple hash from the phrase
+            let hash = 0;
+            const phraseString = phraseArray.join(' ');
+            
+            for (let i = 0; i < phraseString.length; i++) {
+                const char = phraseString.charCodeAt(i);
+                hash = (hash << 5) - hash + char;
+                hash |= 0; // Convert to 32bit integer
+            }
+            
+            // Create consistent address from hash
+            const hex = (hash >>> 0).toString(16).padStart(8, '0');
+            return '0x' + hex.repeat(5).substring(0, 40);
+        }
+        
         // Wallet initialization functions
         function createNewWallet() {
             // Generate a new recovery phrase
             currentRecoveryPhrase = generateRecoveryPhrase();
+            
+            // Generate consistent address
+            walletAddress = generateAddressFromPhrase(currentRecoveryPhrase);
             
             // Hide welcome screen
             document.getElementById('welcomeScreen').style.display = 'none';
@@ -1084,8 +1122,8 @@
             document.getElementById('walletContainer').style.display = 'flex';
             initPortfolioChart();
             
-            // Clear the recovery phrase
-            currentRecoveryPhrase = [];
+            // Set the wallet address in UI
+            document.getElementById('walletAddress').textContent = walletAddress;
         }
         
         // Import Wallet Functions
@@ -1120,18 +1158,22 @@
                 return;
             }
             
+            // Set the recovery phrase
+            currentRecoveryPhrase = phraseWords;
+            
+            // Generate consistent address from phrase
+            walletAddress = generateAddressFromPhrase(phraseWords);
+            
             // Success - show wallet interface
             closeImportModal();
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('walletContainer').style.display = 'flex';
             initPortfolioChart();
             
-            // Generate a random address for demo
-            const randomAddress = '0x' + Array.from({length: 40}, () => 
-                '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
-            document.querySelector('.address-display').textContent = randomAddress;
+            // Set the wallet address in UI
+            document.getElementById('walletAddress').textContent = walletAddress;
             
-            alert('Wallet imported successfully!');
+            alert('Wallet imported successfully! Your address remains consistent.');
         }
         
         // Navigation functions
@@ -1188,8 +1230,7 @@
         }
         
         function copyAddress() {
-            const address = document.querySelector('.address-display').textContent;
-            navigator.clipboard.writeText(address.trim());
+            navigator.clipboard.writeText(walletAddress);
             alert('Address copied to clipboard!');
         }
         
