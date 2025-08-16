@@ -3,82 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snow Wallet</title>
+    <title>Crypto Wallet</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f9fc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        * {
             margin: 0;
-            color: #2c3e50;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
         }
         
-        .wallet-container {
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
             text-align: center;
-            background-color: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 350px;
+            margin-bottom: 30px;
         }
         
-        .welcome-text {
-            font-size: 24px;
-            font-weight: 300;
+        .balance-card {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .balance-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .balance-amount {
+            font-size: 36px;
+            font-weight: bold;
             margin-bottom: 5px;
-            color: #7f8c8d;
+        }
+        
+        .balance-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
         }
         
         .wallet-name {
-            font-size: 36px;
+            text-align: center;
             font-weight: bold;
-            margin-bottom: 40px;
-            color: #3498db;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            color: #555;
         }
         
-        .option-button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: white;
             border: none;
-            border-radius: 8px;
-            font-size: 18px;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48%;
         }
         
-        .create-button {
-            background-color: #3498db;
+        .btn-primary {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
         }
         
-        .import-button {
-            background-color: transparent;
-            color: #3498db;
-            border: 2px solid #3498db;
+        .btn-icon {
+            margin-right: 8px;
+            font-size: 18px;
         }
         
-        .create-button:hover {
-            background-color: #2980b9;
+        .add-account {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6e8efb;
+            font-weight: bold;
+            margin-bottom: 30px;
+            cursor: pointer;
         }
         
-        .import-button:hover {
-            background-color: #f8f9fa;
+        .add-account-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            margin-top: auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #6e8efb;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #555;
+        }
+        
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .address-display {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="wallet-container">
-        <div class="welcome-text">Welcome to the</div>
-        <div class="wallet-name">Snow Wallet</div>
-        
-        <button class="option-button create-button">Create a New Wallet</button>
-        <button class="option-button import-button">Import an Existing Wallet</button>
+    <div class="header">
+        <h1>Total Balance</h1>
     </div>
+    
+    <div class="balance-card">
+        <div class="balance-title">Your Balance</div>
+        <div class="balance-amount">0</div>
+        <div class="balance-subtitle">$0.00</div>
+    </div>
+    
+    <div class="wallet-name">Snowchain</div>
+    
+    <div class="action-buttons">
+        <button class="btn btn-primary" onclick="openSendModal()">
+            <i class="fas fa-paper-plane btn-icon"></i> Send
+        </button>
+        <button class="btn" onclick="openReceiveModal()">
+            <i class="fas fa-qrcode btn-icon"></i> Receive
+        </button>
+    </div>
+    
+    <div class="add-account" onclick="addAccount()">
+        <i class="fas fa-plus add-account-icon"></i> Add Account
+    </div>
+    
+    <div class="navigation">
+        <div class="nav-item active">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-exchange-alt nav-icon"></i>
+            <span>Transfers</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-compass nav-icon"></i>
+            <span>Explorer</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cog nav-icon"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+    
+    <!-- Send Modal -->
+    <div id="sendModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Send Crypto</div>
+            <div class="input-group">
+                <label class="input-label">Recipient Address</label>
+                <input type="text" class="input-field" placeholder="Enter wallet address">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Amount</label>
+                <input type="number" class="input-field" placeholder="0.00">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Network Fee</label>
+                <select class="input-field">
+                    <option>Low (10-30 min)</option>
+                    <option selected>Medium (3-10 min)</option>
+                    <option>High (1-3 min)</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeSendModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="sendTransaction()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Receive Modal -->
+    <div id="receiveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Receive Crypto</div>
+            <div class="qr-code">
+                <i class="fas fa-qrcode" style="font-size: 100px; color: #333;"></i>
+            </div>
+            <div class="address-display">
+                0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeReceiveModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="copyAddress()">
+                    <i class="fas fa-copy"></i> Copy Address
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Modal functions
+        function openSendModal() {
+            document.getElementById('sendModal').style.display = 'flex';
+        }
+        
+        function closeSendModal() {
+            document.getElementById('sendModal').style.display = 'none';
+        }
+        
+        function openReceiveModal() {
+            document.getElementById('receiveModal').style.display = 'flex';
+        }
+        
+        function closeReceiveModal() {
+            document.getElementById('receiveModal').style.display = 'none';
+        }
+        
+        // Transaction functions
+        function sendTransaction() {
+            const address = document.querySelector('#sendModal .input-field:nth-of-type(1)').value;
+            const amount = document.querySelector('#sendModal .input-field:nth-of-type(2)').value;
+            
+            if (!address || !amount) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            alert(`Sending ${amount} crypto to ${address}`);
+            closeSendModal();
+        }
+        
+        function copyAddress() {
+            const address = document.querySelector('.address-display').textContent;
+            navigator.clipboard.writeText(address.trim());
+            alert('Address copied to clipboard!');
+        }
+        
+        function addAccount() {
+            alert('Add account functionality would go here');
+        }
+        
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
-</html>
+[  ] </html>
+
