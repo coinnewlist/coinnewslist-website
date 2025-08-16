@@ -68,6 +68,69 @@
             height: 100%;
         }
         
+        /* Security Warning Modal */
+        .security-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .security-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .security-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .security-message {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            text-align: left;
+        }
+        
+        .security-message strong {
+            font-weight: bold;
+        }
+        
+        .security-divider {
+            border-top: 1px solid #eee;
+            margin: 20px 0;
+        }
+        
+        .security-confirm {
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .security-continue {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        /* Rest of your existing styles... */
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -170,6 +233,7 @@
             align-items: center;
             color: #888;
             font-size: 12px;
+            cursor: pointer;
         }
         
         .nav-item.active {
@@ -296,22 +360,39 @@
         </div>
         
         <div class="navigation">
-            <div class="nav-item active">
+            <div class="nav-item active" onclick="showHome()">
                 <i class="fas fa-home nav-icon"></i>
                 <span>Home</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="showTransfers()">
                 <i class="fas fa-exchange-alt nav-icon"></i>
                 <span>Transfers</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="showExplorer()">
                 <i class="fas fa-compass nav-icon"></i>
                 <span>Explorer</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="showSecurityWarning()">
                 <i class="fas fa-cog nav-icon"></i>
                 <span>Settings</span>
             </div>
+        </div>
+    </div>
+    
+    <!-- Security Warning Modal -->
+    <div id="securityModal" class="security-modal">
+        <div class="security-content">
+            <div class="security-title">Keep Your Recovery Phrase Secret</div>
+            <div class="security-message">
+                <strong>Your secret recovery phrase is like a master key to your wallet.</strong><br><br>
+                If someone gets it, they can steal your funds. There's no way to recover lost funds.<br><br>
+                Never share it with anyone—no person, website, or app.
+            </div>
+            <div class="security-divider"></div>
+            <div class="security-confirm">
+                I understand that sharing my recovery phrase could result in permanent loss of funds.
+            </div>
+            <button class="security-continue" onclick="closeSecurityModal()">Continue</button>
         </div>
     </div>
     
@@ -392,6 +473,39 @@
             }
         }
         
+        // Security Warning Modal
+        function showSecurityWarning() {
+            document.getElementById('securityModal').style.display = 'flex';
+            // Update navigation active state
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-item:nth-child(4)').classList.add('active');
+        }
+        
+        function closeSecurityModal() {
+            document.getElementById('securityModal').style.display = 'none';
+            // Here you would typically navigate to actual settings page
+            alert('Now showing actual settings page...');
+        }
+        
+        // Navigation functions
+        function showHome() {
+            alert('Showing home screen');
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+        }
+        
+        function showTransfers() {
+            alert('Showing transfers screen');
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+        }
+        
+        function showExplorer() {
+            alert('Showing explorer screen');
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+        }
+        
         // Modal functions
         function openSendModal() {
             document.getElementById('sendModal').style.display = 'flex';
@@ -432,14 +546,6 @@
         function addAccount() {
             alert('Add account functionality would go here');
         }
-        
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
     </script>
 </body>
 </html>
