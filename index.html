@@ -5,748 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snow Wallet</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        
         body {
-            background-color: #f5f5f5;
-            color: #333;
-            max-width: 500px;
-            margin: 0 auto;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Welcome Screen */
-        .welcome-screen {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f9fc;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .wallet-container {
             text-align: center;
-            padding: 20px;
-            transition: transform 0.5s ease;
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 350px;
         }
         
-        .welcome-screen.hidden {
-            transform: translateY(-100%);
-        }
-        
-        .welcome-title {
+        .welcome-text {
             font-size: 24px;
-            margin-bottom: 10px;
-            font-weight: normal;
+            font-weight: 300;
+            margin-bottom: 5px;
+            color: #7f8c8d;
         }
         
         .wallet-name {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: bold;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
+            color: #3498db;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
-        .welcome-options {
+        .option-button {
+            display: block;
             width: 100%;
-            max-width: 300px;
-        }
-        
-        .welcome-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            border-radius: 25px;
             padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 8px;
             font-size: 18px;
-            color: white;
-            width: 100%;
-            margin-bottom: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
-        .welcome-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Auth Modal */
-        .auth-modal {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            height: 100%;
-            padding: 30px 20px;
-            transition: transform 0.5s ease;
-            overflow-y: auto;
-        }
-        
-        .auth-modal.visible {
-            transform: translateY(-100%);
-        }
-        
-        .auth-title {
-            font-size: 24px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #333;
-        }
-        
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .auth-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-            border-bottom: 3px solid transparent;
-            color: #888;
-        }
-        
-        .auth-tab.active {
-            border-bottom: 3px solid #6e8efb;
-            font-weight: bold;
-            color: #6e8efb;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        
-        .auth-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-        }
-        
-        .btn {
-            background: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+        .create-button {
+            background-color: #3498db;
             color: white;
         }
         
-        .btn-cancel {
-            background: #f5f5f5;
-            color: #555;
+        .import-button {
+            background-color: transparent;
+            color: #3498db;
+            border: 2px solid #3498db;
         }
         
-        /* Dashboard */
-        .dashboard {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            height: 100%;
-            padding: 20px;
-            transition: transform 0.5s ease;
-            display: flex;
-            flex-direction: column;
+        .create-button:hover {
+            background-color: #2980b9;
         }
         
-        .dashboard.visible {
-            transform: translateY(-100%);
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .balance-card {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .balance-title {
-            font-size: 16px;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
-        
-        .balance-amount {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .balance-subtitle {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        
-        .wallet-name {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 30px;
-            color: #555;
-        }
-        
-        .action-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        
-        .btn-icon {
-            margin-right: 8px;
-            font-size: 18px;
-        }
-        
-        .add-account {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6e8efb;
-            font-weight: bold;
-            margin-bottom: 30px;
-            cursor: pointer;
-        }
-        
-        .add-account-icon {
-            margin-right: 8px;
-            font-size: 18px;
-        }
-        
-        .navigation {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            margin-top: auto;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #888;
-            font-size: 12px;
-        }
-        
-        .nav-item.active {
-            color: #6e8efb;
-        }
-        
-        .nav-icon {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        
-        /* Mnemonic Modal */
-        .mnemonic-modal {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: white;
-            padding: 30px 20px;
-            transition: transform 0.5s ease;
-            z-index: 10;
-        }
-        
-        .mnemonic-modal.visible {
-            transform: translateY(-100%);
-        }
-        
-        .mnemonic-phrase {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-size: 16px;
-            line-height: 1.6;
-            text-align: center;
-        }
-        
-        .warning {
-            color: #e74c3c;
-            font-size: 14px;
-            margin: 15px 0;
-            text-align: center;
-        }
-        
-        /* Transaction Modals */
-        .tx-modal {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: white;
-            padding: 30px 20px;
-            transition: transform 0.5s ease;
-            z-index: 10;
-        }
-        
-        .tx-modal.visible {
-            transform: translateY(-100%);
-        }
-        
-        .qr-code {
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 10px;
-        }
-        
-        .address-display {
-            background: #f5f5f5;
-            padding: 12px;
-            border-radius: 8px;
-            word-break: break-all;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
+        .import-button:hover {
+            background-color: #f8f9fa;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Welcome Screen -->
-    <div id="welcomeScreen" class="welcome-screen">
-        <div class="welcome-title">Welcome to the</div>
-        <div class="wallet-name">Snow Wallet</div>
-        <div class="welcome-options">
-            <button class="welcome-btn" onclick="showAuthModal('signup')">Create a New Wallet</button>
-            <button class="welcome-btn" onclick="showAuthModal('login')">Import an Existing Wallet</button>
-        </div>
-    </div>
-    
-    <!-- Auth Modal -->
-    <div id="authModal" class="auth-modal">
-        <div class="auth-title">Snow Wallet</div>
-        
-        <div class="auth-tabs">
-            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
-            <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
-        </div>
-        
-        <div id="loginForm">
-            <div class="input-group">
-                <label class="input-label">Recovery Phrase</label>
-                <textarea class="input-field" id="loginPhrase" placeholder="Enter your 12-word recovery phrase" rows="3"></textarea>
-            </div>
-            <div class="input-group">
-                <label class="input-label">Password</label>
-                <input type="password" id="loginPassword" class="input-field" placeholder="••••••••">
-            </div>
-            <div class="auth-buttons">
-                <button class="btn btn-cancel" onclick="hideAuthModal()">Back</button>
-                <button class="btn btn-primary" onclick="login()">Unlock Wallet</button>
-            </div>
-        </div>
-        
-        <div id="signupForm" style="display: none;">
-            <div class="input-group">
-                <label class="input-label">Password</label>
-                <input type="password" id="signupPassword" class="input-field" placeholder="••••••••">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Confirm Password</label>
-                <input type="password" id="signupConfirmPassword" class="input-field" placeholder="••••••••">
-            </div>
-            <div class="auth-buttons">
-                <button class="btn btn-cancel" onclick="hideAuthModal()">Back</button>
-                <button class="btn btn-primary" onclick="signup()">Create Wallet</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Mnemonic Modal -->
-    <div id="mnemonicModal" class="mnemonic-modal">
-        <div class="auth-title">Your Recovery Phrase</div>
-        <div class="warning">
-            <i class="fas fa-exclamation-triangle"></i> Write this down and store it securely!
-        </div>
-        <div class="mnemonic-phrase" id="mnemonicPhrase">
-            <!-- Generated mnemonic will appear here -->
-        </div>
-        <div class="warning">
-            This is the only way to recover your wallet if you lose access. Never share it with anyone.
-        </div>
-        <div class="auth-buttons">
-            <button class="btn btn-primary" onclick="confirmMnemonic()">I've Saved It</button>
-        </div>
-    </div>
-    
-    <!-- Dashboard -->
-    <div id="dashboard" class="dashboard">
-        <div class="header">
-            <h1>Total Balance</h1>
-        </div>
-        
-        <div class="balance-card">
-            <div class="balance-title">Your Balance</div>
-            <div class="balance-amount" id="balanceAmount">0</div>
-            <div class="balance-subtitle" id="balanceValue">$0.00</div>
-        </div>
-        
+    <div class="wallet-container">
+        <div class="welcome-text">Welcome to the</div>
         <div class="wallet-name">Snow Wallet</div>
         
-        <div class="action-buttons">
-            <button class="btn btn-primary" onclick="showSendModal()">
-                <i class="fas fa-paper-plane btn-icon"></i> Send
-            </button>
-            <button class="btn" onclick="showReceiveModal()">
-                <i class="fas fa-qrcode btn-icon"></i> Receive
-            </button>
-        </div>
-        
-        <div class="add-account" onclick="addAccount()">
-            <i class="fas fa-plus add-account-icon"></i> Add Account
-        </div>
-        
-        <div class="navigation">
-            <div class="nav-item active">
-                <i class="fas fa-home nav-icon"></i>
-                <span>Home</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-exchange-alt nav-icon"></i>
-                <span>Transfers</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-compass nav-icon"></i>
-                <span>Explorer</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-cog nav-icon"></i>
-                <span>Settings</span>
-            </div>
-        </div>
+        <button class="option-button create-button">Create a New Wallet</button>
+        <button class="option-button import-button">Import an Existing Wallet</button>
     </div>
-    
-    <!-- Send Modal -->
-    <div id="sendModal" class="tx-modal">
-        <div class="auth-title">Send Crypto</div>
-        <div class="input-group">
-            <label class="input-label">Recipient Address</label>
-            <input type="text" class="input-field" placeholder="Enter wallet address">
-        </div>
-        <div class="input-group">
-            <label class="input-label">Amount</label>
-            <input type="number" class="input-field" placeholder="0.00">
-        </div>
-        <div class="input-group">
-            <label class="input-label">Network Fee</label>
-            <select class="input-field">
-                <option>Low (10-30 min)</option>
-                <option selected>Medium (3-10 min)</option>
-                <option>High (1-3 min)</option>
-            </select>
-        </div>
-        <div class="auth-buttons">
-            <button class="btn btn-cancel" onclick="hideSendModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="sendTransaction()">Send</button>
-        </div>
-    </div>
-    
-    <!-- Receive Modal -->
-    <div id="receiveModal" class="tx-modal">
-        <div class="auth-title">Receive Crypto</div>
-        <div class="qr-code">
-            <canvas id="qrCanvas" width="200" height="200"></canvas>
-        </div>
-        <div class="address-display" id="walletAddress">
-            <!-- Wallet address will appear here -->
-        </div>
-        <div class="auth-buttons">
-            <button class="btn btn-cancel" onclick="hideReceiveModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="copyAddress()">
-                <i class="fas fa-copy"></i> Copy Address
-            </button>
-        </div>
-    </div>
-    
-    <script>
-        // User data
-        let currentUser = null;
-        let walletAddress = '';
-        
-        // Show auth modal
-        function showAuthModal(tab) {
-            document.getElementById('welcomeScreen').classList.add('hidden');
-            document.getElementById('authModal').classList.add('visible');
-            switchTab(tab);
-        }
-        
-        // Hide auth modal
-        function hideAuthModal() {
-            document.getElementById('authModal').classList.remove('visible');
-            document.getElementById('welcomeScreen').classList.remove('hidden');
-        }
-        
-        // Switch between login/signup tabs
-        function switchTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.auth-tab[onclick="switchTab('${tab}')"]`).classList.add('active');
-            
-            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
-        }
-        
-        // Login function
-        function login() {
-            const phrase = document.getElementById('loginPhrase').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!phrase || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            // In a real app, this would verify with a server
-            const users = JSON.parse(localStorage.getItem('snowWalletUsers') || '[]');
-            const user = users.find(u => u.mnemonic === phrase && u.password === password);
-            
-            if (user) {
-                currentUser = user;
-                walletAddress = user.walletAddress;
-                localStorage.setItem('snowWalletUser', JSON.stringify(user));
-                showDashboard();
-            } else {
-                alert('Invalid recovery phrase or password');
-            }
-        }
-        
-        // Signup function
-        function signup() {
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            
-            if (!password || !confirmPassword) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-            
-            if (password.length < 8) {
-                alert('Password must be at least 8 characters');
-                return;
-            }
-            
-            // Generate wallet
-            const mnemonic = generateMnemonic();
-            const address = generateAddressFromMnemonic(mnemonic);
-            
-            // Create user
-            const user = {
-                mnemonic,
-                password, // In real app, hash this
-                walletAddress: address,
-                balance: 0,
-                transactions: []
-            };
-            
-            // Show mnemonic
-            document.getElementById('mnemonicPhrase').textContent = mnemonic;
-            document.getElementById('authModal').classList.remove('visible');
-            document.getElementById('mnemonicModal').classList.add('visible');
-            
-            currentUser = user;
-            walletAddress = address;
-        }
-        
-        // Confirm mnemonic
-        function confirmMnemonic() {
-            // Save user
-            const users = JSON.parse(localStorage.getItem('snowWalletUsers') || '[]');
-            users.push(currentUser);
-            localStorage.setItem('snowWalletUsers', JSON.stringify(users));
-            localStorage.setItem('snowWalletUser', JSON.stringify(currentUser));
-            
-            // Show dashboard
-            document.getElementById('mnemonicModal').classList.remove('visible');
-            showDashboard();
-        }
-        
-        // Show dashboard
-        function showDashboard() {
-            document.getElementById('dashboard').classList.add('visible');
-            document.getElementById('walletAddress').textContent = walletAddress;
-            generateQRCode();
-        }
-        
-        // Generate mnemonic phrase
-        function generateMnemonic() {
-            const words = [
-                'abstract', 'account', 'address', 'amount', 'balance',
-                'bank', 'bitcoin', 'block', 'buy', 'crypto',
-                'currency', 'digital', 'exchange', 'fee', 'finance',
-                'fund', 'invest', 'key', 'market', 'money',
-                'network', 'private', 'public', 'receive', 'security',
-                'send', 'trade', 'transfer', 'trust', 'wallet'
-            ];
-            
-            let mnemonic = '';
-            for (let i = 0; i < 12; i++) {
-                const randomIndex = Math.floor(Math.random() * words.length);
-                mnemonic += (i > 0 ? ' ' : '') + words[randomIndex];
-            }
-            
-            return mnemonic;
-        }
-        
-        // Generate wallet address
-        function generateAddressFromMnemonic(mnemonic) {
-            const hash = hashCode(mnemonic);
-            return '0x' + hash.toString(16).padStart(40, '0').slice(0, 40);
-        }
-        
-        // Simple hash function
-        function hashCode(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return Math.abs(hash);
-        }
-        
-        // Generate QR code
-        function generateQRCode() {
-            const canvas = document.getElementById('qrCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Clear canvas
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw QR code (simplified)
-            ctx.fillStyle = '#000000';
-            const size = 10;
-            const offset = (canvas.width - size * 20) / 2;
-            
-            for (let i = 0; i < 20; i++) {
-                for (let j = 0; j < 20; j++) {
-                    if (Math.random() > 0.6 || (i < 8 && j < 8) || (i > 12 && j < 8) || (i < 8 && j > 12)) {
-                        ctx.fillRect(offset + i * size, offset + j * size, size - 1, size - 1);
-                    }
-                }
-            }
-        }
-        
-        // Transaction functions
-        function showSendModal() {
-            document.getElementById('sendModal').classList.add('visible');
-        }
-        
-        function hideSendModal() {
-            document.getElementById('sendModal').classList.remove('visible');
-        }
-        
-        function showReceiveModal() {
-            document.getElementById('receiveModal').classList.add('visible');
-        }
-        
-        function hideReceiveModal() {
-            document.getElementById('receiveModal').classList.remove('visible');
-        }
-        
-        function sendTransaction() {
-            const address = document.querySelector('#sendModal .input-field:nth-of-type(1)').value;
-            const amount = parseFloat(document.querySelector('#sendModal .input-field:nth-of-type(2)').value);
-            
-            if (!address || !amount) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            if (amount <= 0) {
-                alert('Amount must be positive');
-                return;
-            }
-            
-            alert(`Sending ${amount} crypto to ${address}`);
-            
-            // Update balance
-            currentUser.balance -= amount;
-            document.getElementById('balanceAmount').textContent = currentUser.balance.toFixed(4);
-            
-            hideSendModal();
-        }
-        
-        function copyAddress() {
-            navigator.clipboard.writeText(walletAddress);
-            alert('Address copied to clipboard!');
-        }
-        
-        function addAccount() {
-            alert('Add account functionality would go here');
-        }
-        
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        
-        // Check if user is already logged in
-        document.addEventListener('DOMContentLoaded', function() {
-            const loggedInUser = localStorage.getItem('snowWalletUser');
-            if (loggedInUser) {
-                currentUser = JSON.parse(loggedInUser);
-                walletAddress = currentUser.walletAddress;
-                document.getElementById('welcomeScreen').classList.add('hidden');
-                showDashboard();
-            }
-        });
-    </script>
 </body>
 </html>
