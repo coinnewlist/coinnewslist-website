@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snow Wallet - Secure Storage</title>
+    <title>Snow Wallet</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
-            transition: background-color 0.3s, color 0.2s;
         }
         
         body {
@@ -22,12 +21,6 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        
-        /* Dark mode styles */
-        body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
         }
         
         /* Welcome Screen Styles */
@@ -53,10 +46,6 @@
             color: #333;
         }
         
-        body.dark-mode .wallet-brand {
-            color: #e0e0e0;
-        }
-        
         .wallet-option {
             background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
@@ -80,7 +69,7 @@
         }
         
         /* Security Warning Modal */
-        .security-modal, .recovery-modal, .import-modal, .settings-modal, .wallets-modal {
+        .security-modal, .recovery-modal, .import-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -93,50 +82,26 @@
             align-items: center;
         }
         
-        .security-content, .recovery-content, .import-content, .settings-content, .wallets-content {
+        .security-content, .recovery-content, .import-content {
             background: white;
             padding: 25px;
             border-radius: 15px;
             width: 90%;
             max-width: 400px;
             text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
         }
         
-        body.dark-mode .security-content,
-        body.dark-mode .recovery-content,
-        body.dark-mode .import-content,
-        body.dark-mode .settings-content,
-        body.dark-mode .wallets-content {
-            background: #1e1e1e;
-            color: #e0e0e0;
-        }
-        
-        .security-title, .recovery-title, .import-title, .settings-title, .wallets-title {
+        .security-title, .recovery-title, .import-title {
             font-size: 22px;
             font-weight: bold;
             margin-bottom: 20px;
             color: #333;
         }
         
-        body.dark-mode .security-title,
-        body.dark-mode .recovery-title,
-        body.dark-mode .import-title,
-        body.dark-mode .settings-title,
-        body.dark-mode .wallets-title {
-            color: #e0e0e0;
-        }
-        
         .security-message {
             margin-bottom: 25px;
             line-height: 1.6;
             text-align: left;
-            color: #555;
-        }
-        
-        body.dark-mode .security-message {
-            color: #b0b0b0;
         }
         
         .security-message strong {
@@ -148,21 +113,12 @@
             margin: 20px 0;
         }
         
-        body.dark-mode .security-divider {
-            border-top: 1px solid #333;
-        }
-        
         .security-confirm {
             font-style: italic;
             margin-bottom: 20px;
-            color: #666;
         }
         
-        body.dark-mode .security-confirm {
-            color: #999;
-        }
-        
-        .security-continue, .recovery-done, .import-button, .settings-button {
+        .security-continue, .recovery-done, .import-button {
             background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
             border: none;
@@ -184,13 +140,6 @@
             text-align: left;
             border-radius: 4px;
             font-size: 14px;
-            color: #333;
-        }
-        
-        body.dark-mode .recovery-warning {
-            background-color: #2d2319;
-            border-left: 4px solid #ff9800;
-            color: #ffd8a6;
         }
         
         .phrase-grid {
@@ -210,20 +159,11 @@
             text-align: left;
         }
         
-        body.dark-mode .phrase-item {
-            background: #2a2a2a;
-            border: 1px solid #333;
-        }
-        
         .phrase-number {
             font-weight: bold;
             margin-right: 10px;
             min-width: 25px;
             color: #777;
-        }
-        
-        body.dark-mode .phrase-number {
-            color: #999;
         }
         
         .phrase-word {
@@ -241,10 +181,6 @@
             cursor: pointer;
         }
         
-        body.dark-mode .copy-button {
-            color: #8da7ff;
-        }
-        
         .copy-icon {
             margin-right: 8px;
             font-size: 18px;
@@ -255,11 +191,6 @@
             text-align: left;
             margin-bottom: 20px;
             line-height: 1.6;
-            color: #555;
-        }
-        
-        body.dark-mode .import-instructions {
-            color: #b0b0b0;
         }
         
         .import-textarea {
@@ -271,14 +202,6 @@
             font-size: 16px;
             resize: none;
             margin-bottom: 15px;
-            background: #fff;
-            color: #333;
-        }
-        
-        body.dark-mode .import-textarea {
-            background: #2a2a2a;
-            border: 1px solid #444;
-            color: #e0e0e0;
         }
         
         /* Rest of your existing styles... */
@@ -321,10 +244,6 @@
             color: #555;
         }
         
-        body.dark-mode .wallet-name {
-            color: #b0b0b0;
-        }
-        
         .action-buttons {
             display: flex;
             justify-content: space-between;
@@ -347,12 +266,6 @@
             width: 48%;
         }
         
-        body.dark-mode .btn {
-            background: #2a2a2a;
-            color: #e0e0e0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
         .btn-primary {
             background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
@@ -373,10 +286,6 @@
             cursor: pointer;
         }
         
-        body.dark-mode .add-account {
-            color: #8da7ff;
-        }
-        
         .add-account-icon {
             margin-right: 8px;
             font-size: 18px;
@@ -392,11 +301,6 @@
             margin-top: auto;
         }
         
-        body.dark-mode .navigation {
-            background: #1e1e1e;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -406,16 +310,8 @@
             cursor: pointer;
         }
         
-        body.dark-mode .nav-item {
-            color: #777;
-        }
-        
         .nav-item.active {
             color: #6e8efb;
-        }
-        
-        body.dark-mode .nav-item.active {
-            color: #8da7ff;
         }
         
         .nav-icon {
@@ -445,20 +341,10 @@
             max-width: 400px;
         }
         
-        body.dark-mode .modal-content {
-            background: #1e1e1e;
-            color: #e0e0e0;
-        }
-        
         .modal-title {
             font-size: 20px;
             margin-bottom: 20px;
             text-align: center;
-            color: #333;
-        }
-        
-        body.dark-mode .modal-title {
-            color: #e0e0e0;
         }
         
         .input-group {
@@ -472,24 +358,12 @@
             color: #555;
         }
         
-        body.dark-mode .input-label {
-            color: #b0b0b0;
-        }
-        
         .input-field {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 10px;
             font-size: 16px;
-            background: #fff;
-            color: #333;
-        }
-        
-        body.dark-mode .input-field {
-            background: #2a2a2a;
-            border: 1px solid #444;
-            color: #e0e0e0;
         }
         
         .modal-buttons {
@@ -503,21 +377,12 @@
             color: #555;
         }
         
-        body.dark-mode .btn-cancel {
-            background: #2a2a2a;
-            color: #e0e0e0;
-        }
-        
         .qr-code {
             text-align: center;
             margin: 20px 0;
             padding: 15px;
             background: #f9f9f9;
             border-radius: 10px;
-        }
-        
-        body.dark-mode .qr-code {
-            background: #2a2a2a;
         }
         
         .address-display {
@@ -528,241 +393,6 @@
             font-size: 14px;
             margin-bottom: 20px;
             text-align: center;
-            color: #333;
-        }
-        
-        body.dark-mode .address-display {
-            background: #2a2a2a;
-            color: #e0e0e0;
-        }
-        
-        /* Settings modal specific styles */
-        .settings-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        body.dark-mode .settings-option {
-            border-bottom: 1px solid #333;
-        }
-        
-        .settings-option:last-child {
-            border-bottom: none;
-        }
-        
-        .option-title {
-            font-weight: bold;
-        }
-        
-        /* Dark mode toggle switch */
-        .dark-mode-toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .dark-mode-toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .dark-mode-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .dark-mode-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .dark-mode-slider {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-        }
-        
-        input:checked + .dark-mode-slider:before {
-            transform: translateX(26px);
-        }
-        
-        /* Theme icon animation */
-        .theme-icon {
-            transition: transform 0.3s ease;
-        }
-        
-        body.dark-mode .theme-icon {
-            color: #ffd700;
-            transform: rotate(180deg);
-        }
-        
-        /* My Wallets styles */
-        .wallet-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-        
-        .wallet-item {
-            background: #f9f9f9;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #eee;
-        }
-        
-        body.dark-mode .wallet-item {
-            background: #2a2a2a;
-            border: 1px solid #333;
-        }
-        
-        .wallet-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .wallet-name-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .wallet-name-text {
-            font-weight: bold;
-            color: #6e8efb;
-        }
-        
-        body.dark-mode .wallet-name-text {
-            color: #8da7ff;
-        }
-        
-        .wallet-address {
-            font-size: 12px;
-            color: #777;
-            word-break: break-all;
-            margin-bottom: 8px;
-        }
-        
-        body.dark-mode .wallet-address {
-            color: #999;
-        }
-        
-        .wallet-date {
-            font-size: 11px;
-            color: #999;
-            text-align: right;
-        }
-        
-        .no-wallets {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-            font-style: italic;
-        }
-        
-        .wallet-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-        
-        .wallet-action-btn {
-            padding: 5px 10px;
-            margin-left: 8px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .action-view {
-            background: #6e8efb;
-            color: white;
-        }
-        
-        .action-delete {
-            background: #ff6b6b;
-            color: white;
-        }
-        
-        .wallet-phrase {
-            background: #fff8e1;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #333;
-            border-left: 3px solid #ffd54f;
-        }
-        
-        body.dark-mode .wallet-phrase {
-            background: #333028;
-            color: #ffecb3;
-            border-left: 3px solid #ffd54f;
-        }
-        
-        .phrase-hidden {
-            filter: blur(5px);
-            user-select: none;
-            cursor: pointer;
-        }
-        
-        .phrase-visible {
-            filter: none;
-            user-select: text;
-        }
-        
-        /* Success notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transform: translateX(120%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        /* Wallet creation date */
-        .creation-date {
-            font-size: 12px;
-            color: #777;
-            margin-top: 5px;
-            text-align: center;
-        }
-        
-        body.dark-mode .creation-date {
-            color: #999;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -775,7 +405,6 @@
         <div id="welcomeOptions">
             <button class="wallet-option" onclick="createNewWallet()">Create a New Wallet</button>
             <button class="wallet-option" onclick="openImportModal()">Import an Existing Wallet</button>
-            <button class="wallet-option" onclick="openMyWalletsModal()" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);">My Wallets</button>
         </div>
     </div>
     
@@ -789,10 +418,9 @@
             <div class="balance-title">Your Balance</div>
             <div class="balance-amount">0</div>
             <div class="balance-subtitle">$0.00</div>
-            <div class="creation-date" id="creationDate"></div>
         </div>
         
-        <div class="wallet-name" id="currentWalletName">Snowchain</div>
+        <div class="wallet-name">Snowchain</div>
         
         <div class="action-buttons">
             <button class="btn btn-primary" onclick="openSendModal()">
@@ -816,11 +444,11 @@
                 <i class="fas fa-exchange-alt nav-icon"></i>
                 <span>Transfers</span>
             </div>
-            <div class="nav-item" onclick="openMyWalletsModal()">
-                <i class="fas fa-wallet nav-icon"></i>
-                <span>Wallets</span>
+            <div class="nav-item" onclick="showExplorer()">
+                <i class="fas fa-compass nav-icon"></i>
+                <span>Explorer</span>
             </div>
-            <div class="nav-item" onclick="openSettingsModal()">
+            <div class="nav-item" onclick="showSecurityWarning()">
                 <i class="fas fa-cog nav-icon"></i>
                 <span>Settings</span>
             </div>
@@ -872,66 +500,8 @@
                 Enter your 12-word recovery phrase in the correct order. Separate each word with a space.
             </div>
             <textarea class="import-textarea" id="importPhrase" placeholder="Enter your 12-word recovery phrase"></textarea>
-            <div class="input-group">
-                <label class="input-label">Wallet Name (Optional)</label>
-                <input type="text" class="input-field" id="importWalletName" placeholder="My Wallet">
-            </div>
             <button class="import-button" onclick="importWallet()">Import Wallet</button>
             <button class="btn btn-cancel" onclick="closeImportModal()" style="width: 100%; margin-top: 10px;">Cancel</button>
-        </div>
-    </div>
-    
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="settings-modal">
-        <div class="settings-content">
-            <div class="settings-title">Settings</div>
-            
-            <div class="settings-option">
-                <div class="option-title">Dark Mode</div>
-                <label class="dark-mode-toggle">
-                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                    <span class="dark-mode-slider"></span>
-                </label>
-            </div>
-            
-            <div class="settings-option">
-                <div class="option-title">Security & Recovery</div>
-                <i class="fas fa-shield-alt" style="color: #6e8efb; cursor: pointer;" onclick="showSecurityWarning()"></i>
-            </div>
-            
-            <div class="settings-option">
-                <div class="option-title">Currency</div>
-                <span style="color: #6e8efb; cursor: pointer;">USD</span>
-            </div>
-            
-            <div class="settings-option">
-                <div class="option-title">Network</div>
-                <span style="color: #6e8efb; cursor: pointer;">Mainnet</span>
-            </div>
-            
-            <button class="settings-button" onclick="closeSettingsModal()">Close Settings</button>
-        </div>
-    </div>
-    
-    <!-- My Wallets Modal -->
-    <div id="walletsModal" class="wallets-modal">
-        <div class="wallets-content">
-            <div class="wallets-title">My Wallets</div>
-            <p style="margin-bottom: 15px; text-align: left; color: #777;">
-                Your wallets are securely stored in your browser. For real security, write down your recovery phrases.
-            </p>
-            
-            <div class="wallet-list" id="walletList">
-                <!-- Wallet items will be generated here -->
-            </div>
-            
-            <button class="btn btn-primary" onclick="createNewWallet()" style="width: 100%; margin-bottom: 10px;">
-                <i class="fas fa-plus"></i> Create New Wallet
-            </button>
-            
-            <button class="btn" onclick="closeMyWalletsModal()" style="width: 100%;">
-                Close
-            </button>
         </div>
     </div>
     
@@ -969,7 +539,7 @@
             <div class="qr-code">
                 <i class="fas fa-qrcode" style="font-size: 100px; color: #333;"></i>
             </div>
-            <div class="address-display" id="currentAddress">
+            <div class="address-display">
                 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
             </div>
             <div class="modal-buttons">
@@ -981,17 +551,7 @@
         </div>
     </div>
     
-    <!-- Success Notification -->
-    <div class="notification" id="successNotification">
-        Wallet created successfully!
-    </div>
-    
     <script>
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            document.body.classList.add('dark-mode');
-        }
-        
         // Sample word list for recovery phrase (BIP39)
         const bip39Wordlist = [
             'abandon', 'ability', 'able', 'about', 'above', 'absent', 'absorb', 'abstract', 'absurd', 'academy',
@@ -1019,14 +579,6 @@
         
         // Global variable to store generated phrases
         let currentRecoveryPhrase = [];
-        let currentWallet = null;
-        
-        // Initialize wallets from localStorage
-        function initWallets() {
-            if (!localStorage.getItem('snowWallets')) {
-                localStorage.setItem('snowWallets', JSON.stringify([]));
-            }
-        }
         
         // Wallet initialization functions
         function createNewWallet() {
@@ -1038,9 +590,6 @@
             
             // Show security modal
             showSecurityWarning();
-            
-            // Close wallets modal if open
-            closeMyWalletsModal();
         }
         
         function generateRecoveryPhrase() {
@@ -1071,7 +620,6 @@
         // Security Warning Modal
         function showSecurityWarning() {
             document.getElementById('securityModal').style.display = 'flex';
-            closeSettingsModal();
         }
         
         function closeSecurityModal() {
@@ -1105,59 +653,17 @@
         function finishWalletSetup() {
             closeRecoveryModal();
             
-            // Generate wallet address
-            const address = generateWalletAddress();
+            // Reset the welcome screen to show only Import button
+            document.getElementById('welcomeOptions').innerHTML = `
+                <button class="wallet-option" onclick="openImportModal()">Import an Existing Wallet</button>
+            `;
             
-            // Create wallet object
-            const wallet = {
-                id: Date.now().toString(),
-                name: "Snow Wallet " + (Math.floor(Math.random() * 1000) + 1,
-                address: address,
-                phrase: currentRecoveryPhrase.join(' '),
-                created: new Date().toISOString(),
-                balance: 0
-            };
-            
-            // Save wallet to localStorage
-            saveWallet(wallet);
-            
-            // Set as current wallet
-            setCurrentWallet(wallet);
-            
-            // Show wallet interface
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('walletContainer').style.display = 'flex';
-            
-            // Show success notification
-            showNotification('Wallet created successfully!');
+            // Show welcome screen again
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.getElementById('walletContainer').style.display = 'none';
             
             // Clear the recovery phrase
             currentRecoveryPhrase = [];
-        }
-        
-        // Generate a wallet address from phrase
-        function generateWalletAddress() {
-            const chars = '0123456789ABCDEF';
-            let address = '0x';
-            for (let i = 0; i < 40; i++) {
-                address += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return address;
-        }
-        
-        // Save wallet to localStorage
-        function saveWallet(wallet) {
-            const wallets = JSON.parse(localStorage.getItem('snowWallets') || [];
-            wallets.push(wallet);
-            localStorage.setItem('snowWallets', JSON.stringify(wallets));
-        }
-        
-        // Set current wallet in UI
-        function setCurrentWallet(wallet) {
-            currentWallet = wallet;
-            document.getElementById('currentAddress').textContent = wallet.address;
-            document.getElementById('currentWalletName').textContent = wallet.name;
-            document.getElementById('creationDate').textContent = 'Created: ' + new Date(wallet.created).toLocaleDateString();
         }
         
         // Import Wallet Functions
@@ -1171,7 +677,6 @@
         
         function importWallet() {
             const phraseInput = document.getElementById('importPhrase').value.trim();
-            const walletName = document.getElementById('importWalletName').value.trim() || "Imported Wallet";
             
             if (!phraseInput) {
                 alert('Please enter your recovery phrase');
@@ -1193,119 +698,17 @@
                 return;
             }
             
-            // Success - create wallet object
-            const wallet = {
-                id: Date.now().toString(),
-                name: walletName,
-                address: generateWalletAddress(),
-                phrase: phraseWords.join(' '),
-                created: new Date().toISOString(),
-                balance: 0
-            };
-            
-            // Save wallet to localStorage
-            saveWallet(wallet);
-            
-            // Set as current wallet
-            setCurrentWallet(wallet);
-            
-            // Close modal and show wallet interface
+            // Success - show wallet interface
             closeImportModal();
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('walletContainer').style.display = 'flex';
             
-            // Show success notification
-            showNotification('Wallet imported successfully!');
-        }
-        
-        // My Wallets Modal Functions
-        function openMyWalletsModal() {
-            document.getElementById('walletsModal').style.display = 'flex';
-            renderWalletList();
-        }
-        
-        function closeMyWalletsModal() {
-            document.getElementById('walletsModal').style.display = 'none';
-        }
-        
-        function renderWalletList() {
-            const walletList = document.getElementById('walletList');
-            walletList.innerHTML = '';
+            // Generate a random address for demo
+            const randomAddress = '0x' + Array.from({length: 40}, () => 
+                '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
+            document.querySelector('.address-display').textContent = randomAddress;
             
-            const wallets = JSON.parse(localStorage.getItem('snowWallets')) || [];
-            
-            if (wallets.length === 0) {
-                walletList.innerHTML = '<div class="no-wallets">No wallets found. Create or import a wallet to get started.</div>';
-                return;
-            }
-            
-            wallets.forEach(wallet => {
-                const walletItem = document.createElement('div');
-                walletItem.className = 'wallet-item';
-                walletItem.innerHTML = `
-                    <div class="wallet-name-row">
-                        <div class="wallet-name-text">${wallet.name}</div>
-                        <div class="wallet-date">${new Date(wallet.created).toLocaleDateString()}</div>
-                    </div>
-                    <div class="wallet-address">${wallet.address}</div>
-                    <div class="wallet-phrase phrase-hidden" onclick="togglePhraseVisibility(this)">
-                        Click to reveal recovery phrase
-                    </div>
-                    <div class="wallet-actions">
-                        <button class="wallet-action-btn action-view" onclick="setCurrentWalletById('${wallet.id}')">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="wallet-action-btn action-delete" onclick="deleteWallet('${wallet.id}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                `;
-                walletList.appendChild(walletItem);
-            });
-        }
-        
-        function setCurrentWalletById(walletId) {
-            const wallets = JSON.parse(localStorage.getItem('snowWallets')) || [];
-            const wallet = wallets.find(w => w.id === walletId);
-            
-            if (wallet) {
-                setCurrentWallet(wallet);
-                document.getElementById('welcomeScreen').style.display = 'none';
-                document.getElementById('walletContainer').style.display = 'flex';
-                closeMyWalletsModal();
-            }
-        }
-        
-        function deleteWallet(walletId) {
-            if (!confirm('Are you sure you want to delete this wallet? This action cannot be undone.')) {
-                return;
-            }
-            
-            let wallets = JSON.parse(localStorage.getItem('snowWallets')) || [];
-            wallets = wallets.filter(w => w.id !== walletId);
-            localStorage.setItem('snowWallets', JSON.stringify(wallets));
-            
-            if (currentWallet && currentWallet.id === walletId) {
-                document.getElementById('walletContainer').style.display = 'none';
-                document.getElementById('welcomeScreen').style.display = 'flex';
-                currentWallet = null;
-            }
-            
-            renderWalletList();
-        }
-        
-        function togglePhraseVisibility(element) {
-            if (element.classList.contains('phrase-hidden')) {
-                const walletId = element.closest('.wallet-item').querySelector('.action-view').onclick.toString().match(/'([^']+)'/)[1];
-                const wallets = JSON.parse(localStorage.getItem('snowWallets')) || [];
-                const wallet = wallets.find(w => w.id === walletId);
-                
-                if (wallet) {
-                    element.textContent = wallet.phrase;
-                    element.classList.remove('phrase-hidden');
-                    element.classList.add('phrase-visible');
-                }
-            }
+            alert('Wallet imported successfully!');
         }
         
         // Navigation functions
@@ -1320,26 +723,16 @@
             document.querySelector('.nav-item:nth-child(2)').classList.add('active');
         }
         
-        // Settings Modal Functions
-        function openSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'flex';
-            // Update toggle state based on current mode
-            document.getElementById('darkModeToggle').checked = document.body.classList.contains('dark-mode');
+        function showExplorer() {
+            alert('Showing explorer screen');
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-item:nth-child(3)').classList.add('active');
         }
         
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-        
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            
-            // Save preference to localStorage
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('darkMode', 'enabled');
-            } else {
-                localStorage.setItem('darkMode', 'disabled');
-            }
+        function showSecurityWarning() {
+            document.getElementById('securityModal').style.display = 'flex';
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-item:nth-child(4)').classList.add('active');
         }
         
         // Modal functions
@@ -1352,9 +745,6 @@
         }
         
         function openReceiveModal() {
-            if (currentWallet) {
-                document.getElementById('currentAddress').textContent = currentWallet.address;
-            }
             document.getElementById('receiveModal').style.display = 'flex';
         }
         
@@ -1377,46 +767,14 @@
         }
         
         function copyAddress() {
-            if (currentWallet) {
-                navigator.clipboard.writeText(currentWallet.address);
-                alert('Address copied to clipboard!');
-            }
+            const address = document.querySelector('.address-display').textContent;
+            navigator.clipboard.writeText(address.trim());
+            alert('Address copied to clipboard!');
         }
         
         function addAccount() {
             alert('Add account functionality would go here');
         }
-        
-        // Show notification
-        function showNotification(message) {
-            const notification = document.getElementById('successNotification');
-            notification.textContent = message;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Initialize wallets on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initWallets();
-            
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                document.body.classList.add('dark-mode');
-            }
-            
-            // Check if we have wallets and show welcome screen
-            const wallets = JSON.parse(localStorage.getItem('snowWallets')) || [];
-            if (wallets.length > 0) {
-                // Show welcome screen with "My Wallets" option
-                document.getElementById('welcomeOptions').innerHTML = `
-                    <button class="wallet-option" onclick="createNewWallet()">Create a New Wallet</button>
-                    <button class="wallet-option" onclick="openImportModal()">Import an Existing Wallet</button>
-                    <button class="wallet-option" onclick="openMyWalletsModal()" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);">My Wallets</button>
-                `;
-            }
-        });
     </script>
 </body>
 </html>
