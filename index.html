@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Wallet</title>
+    <title>Snow Wallet</title>
     <style>
         * {
             margin: 0;
@@ -21,6 +21,51 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+        
+        /* Welcome Screen Styles */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .welcome-title {
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: #6e8efb;
+        }
+        
+        .wallet-brand {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            color: #333;
+        }
+        
+        .wallet-option {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 300px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Main Wallet Styles (hidden by default) */
+        .wallet-container {
+            display: none;
+            flex-direction: column;
+            height: 100%;
         }
         
         .header {
@@ -215,47 +260,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Total Balance</h1>
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-title">Welcome to the</div>
+        <div class="wallet-brand">Snow Wallet</div>
+        <button class="wallet-option" onclick="createNewWallet()">Create a New Wallet</button>
+        <button class="wallet-option" onclick="importExistingWallet()">Import an Existing Wallet</button>
     </div>
     
-    <div class="balance-card">
-        <div class="balance-title">Your Balance</div>
-        <div class="balance-amount">0</div>
-        <div class="balance-subtitle">$0.00</div>
-    </div>
-    
-    <div class="wallet-name">Snowchain</div>
-    
-    <div class="action-buttons">
-        <button class="btn btn-primary" onclick="openSendModal()">
-            <i class="fas fa-paper-plane btn-icon"></i> Send
-        </button>
-        <button class="btn" onclick="openReceiveModal()">
-            <i class="fas fa-qrcode btn-icon"></i> Receive
-        </button>
-    </div>
-    
-    <div class="add-account" onclick="addAccount()">
-        <i class="fas fa-plus add-account-icon"></i> Add Account
-    </div>
-    
-    <div class="navigation">
-        <div class="nav-item active">
-            <i class="fas fa-home nav-icon"></i>
-            <span>Home</span>
+    <!-- Main Wallet Interface (hidden initially) -->
+    <div class="wallet-container" id="walletContainer">
+        <div class="header">
+            <h1>Total Balance</h1>
         </div>
-        <div class="nav-item">
-            <i class="fas fa-exchange-alt nav-icon"></i>
-            <span>Transfers</span>
+        
+        <div class="balance-card">
+            <div class="balance-title">Your Balance</div>
+            <div class="balance-amount">0</div>
+            <div class="balance-subtitle">$0.00</div>
         </div>
-        <div class="nav-item">
-            <i class="fas fa-compass nav-icon"></i>
-            <span>Explorer</span>
+        
+        <div class="wallet-name">Snowchain</div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openSendModal()">
+                <i class="fas fa-paper-plane btn-icon"></i> Send
+            </button>
+            <button class="btn" onclick="openReceiveModal()">
+                <i class="fas fa-qrcode btn-icon"></i> Receive
+            </button>
         </div>
-        <div class="nav-item">
-            <i class="fas fa-cog nav-icon"></i>
-            <span>Settings</span>
+        
+        <div class="add-account" onclick="addAccount()">
+            <i class="fas fa-plus add-account-icon"></i> Add Account
+        </div>
+        
+        <div class="navigation">
+            <div class="nav-item active">
+                <i class="fas fa-home nav-icon"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-exchange-alt nav-icon"></i>
+                <span>Transfers</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-compass nav-icon"></i>
+                <span>Explorer</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-cog nav-icon"></i>
+                <span>Settings</span>
+            </div>
         </div>
     </div>
     
@@ -306,6 +362,36 @@
     </div>
     
     <script>
+        // Wallet initialization functions
+        function createNewWallet() {
+            // In a real app, this would generate a new wallet with private key
+            alert('New wallet created! Generating keys...');
+            
+            // For demo purposes, we'll just show the wallet interface
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('walletContainer').style.display = 'flex';
+            
+            // Generate a random address for demo
+            const randomAddress = '0x' + Array.from({length: 40}, () => 
+                '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
+            document.querySelector('.address-display').textContent = randomAddress;
+        }
+        
+        function importExistingWallet() {
+            // In a real app, this would import an existing wallet
+            const privateKey = prompt('Enter your private key or seed phrase:');
+            if (privateKey) {
+                alert('Wallet imported successfully!');
+                
+                // Show the wallet interface
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('walletContainer').style.display = 'flex';
+                
+                // For demo, we'll just show a sample address
+                document.querySelector('.address-display').textContent = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+            }
+        }
+        
         // Modal functions
         function openSendModal() {
             document.getElementById('sendModal').style.display = 'flex';
@@ -356,5 +442,4 @@
         });
     </script>
 </body>
-[  ] </html>
-
+</html>
